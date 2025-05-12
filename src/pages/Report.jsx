@@ -1,21 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart, LineChart, PieChart, DollarSign, TrendingUp, Package, Award, Calendar, ArrowUpRight } from 'lucide-react';
-
-const mockMonthlyData = [
-  { month: 'Januari', revenue: 9500000, orders: 142, avgOrder: 66901 },
-  { month: 'Februari', revenue: 10200000, orders: 156, avgOrder: 65385 },
-  { month: 'Maret', revenue: 11800000, orders: 178, avgOrder: 66292 },
-  { month: 'April', revenue: 12500000, orders: 195, avgOrder: 64103 },
-  { month: 'Mei', revenue: 13100000, orders: 210, avgOrder: 62381 }
-];
-
-const mockTopProducts = [
-  { name: 'Nasi Goreng Spesial', sold: 234, revenue: 3510000 },
-  { name: 'Ayam Bakar Madu', sold: 189, revenue: 3402000 },
-  { name: 'Soto Ayam', sold: 176, revenue: 2640000 },
-  { name: 'Es Teh Manis', sold: 100, revenue: 1248000 },
-  { name: 'Mie Goreng Seafood', sold: 143, revenue: 2288000 }
-];
+import { DollarSign, TrendingUp, Package, Award, Calendar, ArrowUpRight } from 'lucide-react';
+import { mockMonthlyData, mockTopProducts } from '../data/DummyData';
 
 const SimpleBarChart = ({ data }) => {
   const max = Math.max(...data.map(item => item.value));

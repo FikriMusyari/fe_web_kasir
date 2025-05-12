@@ -1,17 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, PlusCircle, ChevronDown, Filter, Edit, Trash2, Tag, X } from 'lucide-react';
-
-const mockMenuData = [
-  { id: 1, name: 'Ayam Kecap', price: 13.000, category: 'Ayam', image: '/ayamkecap.jpg', description: 'ya ayam kecap' },
-  { id: 2, name: 'Ayam cabe merah', price: 100.000, category: 'Ayam', image: '/ayamcabemerah.jpg', description: 'ya ayam cabe' },
-  { id: 3, name: 'Ayam Cabe ijo', price: 100.000, category: 'Ayam', image: '/ayamcabeijo.jpg', description: 'lopyu' },
-  { id: 4, name: 'Nasi Goreng', price: 500.000, category: 'Nasi', image: '/nasigoreng.jpg', description: 'lopyu' },
-  { id: 5, name: 'Minas', price: 800.000, category: 'Nasi', image: '/minas.jpeg', description: 'lopyu' },
-  { id: 6, name: 'Batagor', price: 900.000, category: 'cemilan', image: '/api/placeholder/300/200', description: 'lopyu.' },
-  { id: 7, name: 'Sate', price: 22.99, category: 'sate', image: '/api/placeholder/300/200', description: 'lopyu' },
-  { id: 8, name: 'Lontong Pecal telur', price: 13.99, category: 'sarapan pagi', image: '/api/placeholder/300/200', description: 'lopyu' },
-  { id: 9, name: 'es coklat', price: 16.99, category: 'Minuman', image: '/api/placeholder/300/200', description: 'dila cantik' }
-];
+import { menuItems } from '../data/DummyData';
 
 const MenuCard = ({ item, onDelete }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -20,8 +9,8 @@ const MenuCard = ({ item, onDelete }) => {
     <div 
       className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300"
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+      onMouseLeave={() => setIsHovered(false)} >
+      
       <div className="relative">
         <img 
           src={item.image} 
@@ -44,7 +33,7 @@ const MenuCard = ({ item, onDelete }) => {
         </div>
         
         <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold">
-          {item.price.toFixed(3)}
+          Rp {item.price.toLocaleString()}
         </div>
       </div>
       
@@ -70,7 +59,7 @@ const AddMenuItemModal = ({ isOpen, onClose, onAdd, existingCategories }) => {
     price: '',
     category: '',
     description: '',
-    image: '/api/placeholder/300/200'
+    image: '/ayamkecap.jpg'
   });
   
   const [newCategory, setNewCategory] = useState('');
@@ -106,7 +95,7 @@ const AddMenuItemModal = ({ isOpen, onClose, onAdd, existingCategories }) => {
       price: '',
       category: '',
       description: '',
-      image: '/api/placeholder/300/200'
+      image: '/ayamkecap.jpg'
     });
     setNewCategory('');
     setShowNewCategoryInput(false);
@@ -242,7 +231,7 @@ const AddMenuItemModal = ({ isOpen, onClose, onAdd, existingCategories }) => {
 };
 
 const Menu = () => {
-  const [menu, setMenu] = useState(mockMenuData);
+  const [menu, setMenu] = useState(menuItems);
   const [searchTerm, setSearchTerm] = useState('');
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -252,7 +241,7 @@ const Menu = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   useEffect(() => {
-    const uniqueCategories = ['All', ...new Set(mockMenuData.map(item => item.category))];
+    const uniqueCategories = ['All', ...new Set(menuItems.map(item => item.category))];
     setCategories(uniqueCategories);
     
     const timer = setTimeout(() => {
@@ -375,7 +364,7 @@ const Menu = () => {
                       </button>
                     ))}
                   </div>
-                </div>
+                </div>  
                 
                 <div>
                   <h3 className="text-sm font-medium text-gray-700 mb-2">Sort by</h3>
