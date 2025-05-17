@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Sidebar from '../components/Sidebar'; // Pastikan path sesuai dengan struktur proyekmu // Pastikan Sidebar diimpor dengan benar
 import { DollarSign, TrendingUp, Package, Award, Calendar, ArrowUpRight } from 'lucide-react';
 import { mockMonthlyData, mockTopProducts } from '../data/DummyData';
 
@@ -44,6 +45,9 @@ const Reports = () => {
   const [selectedView, setSelectedView] = useState('overview');
   const [isLoading, setIsLoading] = useState(true);
   const [compareMode, setCompareMode] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [userRole, setUserRole] = useState('admin');
+  const [userName, setUserName] = useState('Admin'); // Replace with dynamic userName here
   
   const currentMonthData = mockMonthlyData[mockMonthlyData.length - 1];
   const prevMonthData = mockMonthlyData[mockMonthlyData.length - 2];
@@ -72,18 +76,6 @@ const Reports = () => {
     return () => clearTimeout(timer);
   }, []);
   
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-pulse flex flex-col items-center">
-          <div className="h-16 w-16 bg-gray-200 rounded-full mb-4"></div>
-          <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
-          <div className="h-3 bg-gray-200 rounded w-16"></div>
-        </div>
-      </div>
-    );
-  }
-
   const renderProductsSection = () => {
     return (
       <div>
@@ -157,6 +149,7 @@ const Reports = () => {
                 </div>
               </div>
               
+            
               <div>
                 <div className="flex justify-between text-sm text-gray-600 mb-1">
                   <span>Jumlah Order</span>
@@ -285,67 +278,78 @@ const Reports = () => {
   };
   
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-          <div>
-            <h2 className="text-3xl font-bold text-gray-800 mb-2">
-              <span className="text-green-600">Laporan</span> Penjualan Bulanan
-            </h2>
-            <p className="text-gray-600">
-              Menampilkan total pendapatan dan produk terlaris per bulan.
-            </p>
-          </div>
-          
-          <div className="mt-4 md:mt-0 flex items-center space-x-3">
-            <div className="relative">
-              <select 
-                className="appearance-none bg-gray-50 border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                value={period}
-                onChange={(e) => setPeriod(e.target.value)}
-              >
-                {mockMonthlyData.map(month => (
-                  <option key={month.month} value={month.month}>{month.month}</option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <Calendar size={16} />
-              </div>
+    <div className="flex">
+      <Sidebar
+        userRole={userRole}
+        userName={userName} // Pass dynamic username here
+        onLogout={() => console.log('Logged out')}
+        activeTab="reports"
+        setActiveTab={() => {}}
+        isCollapsed={isSidebarCollapsed}
+        toggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+      />
+      <div className={`flex-1 p-6 transition-all duration-300 ease-in-out ${isSidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-800 mb-2">
+                <span className="text-green-600">Laporan</span> Penjualan Bulanan
+              </h2>
+              <p className="text-gray-600">
+                Menampilkan total pendapatan dan produk terlaris per bulan.
+              </p>
             </div>
             
-            <button 
-              className={`px-3 py-2 rounded-md transition-colors ${compareMode ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}
-              onClick={() => setCompareMode(!compareMode)}
+            <div className="mt-4 md:mt-0 flex items-center space-x-3">
+              <div className="relative">
+                <select 
+                  className="appearance-none bg-gray-50 border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  value={period}
+                  onChange={(e) => setPeriod(e.target.value)}
+                >
+                  {mockMonthlyData.map(month => (
+                    <option key={month.month} value={month.month}>{month.month}</option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <Calendar size={16} />
+                </div>
+              </div>
+              
+              <button 
+                className={`px-3 py-2 rounded-md transition-colors ${compareMode ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}
+                onClick={() => setCompareMode(!compareMode)}
+              >
+                Compare
+              </button>
+            </div>
+          </div>
+          
+          <div className="flex border-b border-gray-200 mb-6">
+            <button
+              className={`px-4 py-2 font-medium text-sm ${selectedView === 'overview' ? 'text-green-600 border-b-2 border-green-500' : 'text-gray-500 hover:text-gray-700'}`}
+              onClick={() => setSelectedView('overview')}
             >
-              Compare
+              Overview
+            </button>
+            <button
+              className={`px-4 py-2 font-medium text-sm ${selectedView === 'products' ? 'text-green-600 border-b-2 border-green-500' : 'text-gray-500 hover:text-gray-700'}`}
+              onClick={() => setSelectedView('products')}
+            >
+              Produk Terlaris
+            </button>
+            <button
+              className={`px-4 py-2 font-medium text-sm ${selectedView === 'trends' ? 'text-green-600 border-b-2 border-green-500' : 'text-gray-500 hover:text-gray-700'}`}
+              onClick={() => setSelectedView('trends')}
+            >
+              Trend Penjualan
             </button>
           </div>
+          
+          {selectedView === 'overview' && renderOverviewSection()}
+          {selectedView === 'products' && renderProductsSection()}
+          {selectedView === 'trends' && renderTrendsSection()}
         </div>
-        
-        <div className="flex border-b border-gray-200 mb-6">
-          <button
-            className={`px-4 py-2 font-medium text-sm ${selectedView === 'overview' ? 'text-green-600 border-b-2 border-green-500' : 'text-gray-500 hover:text-gray-700'}`}
-            onClick={() => setSelectedView('overview')}
-          >
-            Overview
-          </button>
-          <button
-            className={`px-4 py-2 font-medium text-sm ${selectedView === 'products' ? 'text-green-600 border-b-2 border-green-500' : 'text-gray-500 hover:text-gray-700'}`}
-            onClick={() => setSelectedView('products')}
-          >
-            Produk Terlaris
-          </button>
-          <button
-            className={`px-4 py-2 font-medium text-sm ${selectedView === 'trends' ? 'text-green-600 border-b-2 border-green-500' : 'text-gray-500 hover:text-gray-700'}`}
-            onClick={() => setSelectedView('trends')}
-          >
-            Trend Penjualan
-          </button>
-        </div>
-        
-        {selectedView === 'overview' && renderOverviewSection()}
-        {selectedView === 'products' && renderProductsSection()}
-        {selectedView === 'trends' && renderTrendsSection()}
       </div>
     </div>
   );

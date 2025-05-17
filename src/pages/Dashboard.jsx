@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { CreditCard, ClipboardList, BarChart3, History, User, Coffee, TrendingUp, ShoppingCart, Package, ReceiptText, LineChart, MapPin, Phone, Clock } from 'lucide-react';
+import { CreditCard, ClipboardList, BarChart3, History, User, Coffee, TrendingUp, ShoppingCart, Package, ReceiptText, LineChart, MapPin, Phone, Clock, ChevronLeft, Menu } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import { mockTopProducts, transactionHistory, businessInfo } from '../data/DummyData';
 
@@ -8,6 +8,7 @@ const Dashboard = ({ userRole, userName, onLogout }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState(location.pathname.split('/')[1] || 'dashboard');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const adminCards = [
     {
@@ -64,17 +65,26 @@ const Dashboard = ({ userRole, userName, onLogout }) => {
     };
   }, []);
 
+  const toggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
+
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar 
-        userRole={userRole} 
-        userName={userName} 
-        onLogout={onLogout} 
-        activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
-      />
+      {/* Sidebar with toggle functionality */}
+      <div className={`relative ${sidebarCollapsed ? 'w-20' : 'w-14'} transition-all duration-300 ease-in-out`}>
+        <Sidebar 
+          userRole={userRole} 
+          userName={userName} 
+          onLogout={onLogout} 
+          activeTab={activeTab} 
+          setActiveTab={setActiveTab}
+          isCollapsed={sidebarCollapsed}
+          toggleSidebar={toggleSidebar}
+        />
+      </div>
 
-      <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50">
+      <main className={`flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 ${sidebarCollapsed ? 'ml-20' : 'ml-64'} transition-all duration-300 ease-in-out`}>
         {activeTab === 'dashboard' && (
           <div className="p-6">
             <div className="flex justify-between items-center mb-8">
@@ -193,4 +203,4 @@ const Dashboard = ({ userRole, userName, onLogout }) => {
   );
 };
 
-export default Dashboard; 
+export default Dashboard;

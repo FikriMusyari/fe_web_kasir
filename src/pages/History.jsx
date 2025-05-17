@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { History, Search, Calendar, ChevronDown, Download, Filter, ArrowUpDown, CheckCircle, Clock, CreditCard, AlertCircle, ShoppingBag } from 'lucide-react';
+import Sidebar from '../components/Sidebar';
 
 const mockTransactions = [
   { 
@@ -105,6 +106,8 @@ const TransactionHistory = ({ userRole = 'admin', userName = 'Administrator' }) 
   const [loading, setLoading] = useState(true);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [activeTab, setActiveTab] = useState('history');
   
   const paymentMethods = ['all', 'Credit Card', 'Cash', 'Bank Transfer', 'Digital Wallet', 'QRIS'];
   const statusOptions = ['all', 'completed', 'pending', 'processing', 'cancelled'];
@@ -192,6 +195,14 @@ const TransactionHistory = ({ userRole = 'admin', userName = 'Administrator' }) 
     console.log('Exporting transaction history data');
   };
 
+  const handleLogout = () => {
+    console.log('Logging out...');
+  };
+
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
+
   const filteredTransactions = transactions.filter(transaction => {
     const matchesSearch = 
       transaction.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -248,7 +259,17 @@ const TransactionHistory = ({ userRole = 'admin', userName = 'Administrator' }) 
 
   return (
     <div className="flex h-screen bg-gray-100">
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <Sidebar 
+        userRole={userRole} 
+        userName={userName} 
+        onLogout={handleLogout}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        isCollapsed={isSidebarCollapsed}
+        toggleSidebar={toggleSidebar}
+      />
+      
+      <div className={`flex-1 flex flex-col overflow-hidden ${isSidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
         <header className="bg-white shadow">
           <div className="px-6 py-4">
             <div className="flex items-center justify-between">
