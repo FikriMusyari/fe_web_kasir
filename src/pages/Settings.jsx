@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 
 const Header = ({ title, userRole, onLogout }) => {
@@ -35,6 +36,9 @@ const SettingsPage = ({ userRole, onLogout }) => {
     backupLocation: 'cloud'
   });
 
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [activeMenu, setActiveMenu] = useState('settings');
+
   const handleGeneralChange = (e) => {
     const { name, value } = e.target;
     setGeneralSettings(prev => ({
@@ -66,9 +70,15 @@ const SettingsPage = ({ userRole, onLogout }) => {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      <Sidebar userRole={userRole} activeMenu="settings" />
+      <Sidebar 
+        userRole={userRole}
+        activeMenu={activeMenu}
+        isCollapsed={isSidebarCollapsed}
+        toggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        setActiveTab={setActiveMenu}
+      />
       
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${isSidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
         <Header title="Settings" userRole={userRole} onLogout={onLogout} />
         
         <main className="flex-1 overflow-y-auto p-4">
@@ -76,13 +86,12 @@ const SettingsPage = ({ userRole, onLogout }) => {
             <h2 className="text-2xl font-semibold mb-6">System Settings</h2>
             
             <form onSubmit={handleSaveSettings}>
+              {/* General Settings */}
               <div className="mb-8">
                 <h3 className="text-lg font-medium border-b pb-2 mb-4">General Settings</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Restaurant Name
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Restaurant Name</label>
                     <input
                       type="text"
                       name="restaurantName"
@@ -92,9 +101,7 @@ const SettingsPage = ({ userRole, onLogout }) => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Address
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
                     <input
                       type="text"
                       name="address"
@@ -104,9 +111,7 @@ const SettingsPage = ({ userRole, onLogout }) => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Phone
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
                     <input
                       type="text"
                       name="phone"
@@ -116,9 +121,7 @@ const SettingsPage = ({ userRole, onLogout }) => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Email
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                     <input
                       type="email"
                       name="email"
@@ -128,9 +131,7 @@ const SettingsPage = ({ userRole, onLogout }) => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Tax Percentage (%)
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Tax Percentage (%)</label>
                     <input
                       type="number"
                       name="taxPercentage"
@@ -142,13 +143,12 @@ const SettingsPage = ({ userRole, onLogout }) => {
                 </div>
               </div>
               
+              {/* Printer Settings */}
               <div className="mb-8">
                 <h3 className="text-lg font-medium border-b pb-2 mb-4">Printer Settings</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Receipt Printer
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Receipt Printer</label>
                     <select
                       name="receiptPrinter"
                       value={printerSettings.receiptPrinter}
@@ -161,9 +161,7 @@ const SettingsPage = ({ userRole, onLogout }) => {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Kitchen Printer
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Kitchen Printer</label>
                     <select
                       name="kitchenPrinter"
                       value={printerSettings.kitchenPrinter}
@@ -191,6 +189,7 @@ const SettingsPage = ({ userRole, onLogout }) => {
                 </div>
               </div>
               
+              {/* Backup Settings */}
               <div className="mb-8">
                 <h3 className="text-lg font-medium border-b pb-2 mb-4">Backup & Data</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -211,9 +210,7 @@ const SettingsPage = ({ userRole, onLogout }) => {
                   {backupSettings.autoBackup && (
                     <>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Backup Frequency
-                        </label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Backup Frequency</label>
                         <select
                           name="backupFrequency"
                           value={backupSettings.backupFrequency}
@@ -227,9 +224,7 @@ const SettingsPage = ({ userRole, onLogout }) => {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Backup Location
-                        </label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Backup Location</label>
                         <select
                           name="backupLocation"
                           value={backupSettings.backupLocation}
@@ -266,6 +261,7 @@ const SettingsPage = ({ userRole, onLogout }) => {
                 </div>
               </div>
               
+              {/* Save and Cancel buttons */}
               <div className="flex justify-end mt-6">
                 <button
                   type="button"

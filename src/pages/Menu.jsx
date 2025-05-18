@@ -1,29 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { Search, PlusCircle, ChevronDown, Filter, Edit, Trash2, Tag, X } from 'lucide-react';
-import { menuItems } from '../data/DummyData';
+import { Search, PlusCircle, ChevronDown, Filter, Edit, User, Trash2, Tag, X } from 'lucide-react';
+import { menuItems } from '../data/DummyData'; // Ganti dengan data aktual
+import Sidebar from '../components/Sidebar'; // Pastikan Sidebar diimpor dengan benar
 
+// MenuCard Component
 const MenuCard = ({ item, onDelete }) => {
   const [isHovered, setIsHovered] = useState(false);
-  
+
   return (
-    <div 
+    <div
       className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300"
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)} >
-      
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <div className="relative">
-        <img 
-          src={item.image} 
-          alt={item.name} 
+        <img
+          src={item.image}
+          alt={item.name}
           className="w-full h-48 object-cover"
         />
-        
-        <div className={`absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
+        <div
+          className={`absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}
+        >
           <div className="flex space-x-3">
             <button className="bg-white p-2 rounded-full hover:bg-gray-100 transition-colors">
               <Edit size={18} className="text-gray-700" />
             </button>
-            <button 
+            <button
               className="bg-white p-2 rounded-full hover:bg-red-100 transition-colors"
               onClick={() => onDelete(item.id)}
             >
@@ -31,19 +34,18 @@ const MenuCard = ({ item, onDelete }) => {
             </button>
           </div>
         </div>
-        
         <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold">
           Rp {item.price.toLocaleString()}
         </div>
       </div>
-      
+
       <div className="p-4">
         <div className="flex justify-between items-start mb-2">
           <h3 className="font-bold text-lg text-gray-800">{item.name}</h3>
         </div>
-        
+
         <p className="text-gray-600 text-sm mb-3 line-clamp-2">{item.description}</p>
-        
+
         <div className="flex items-center text-xs">
           <Tag size={14} className="text-emerald-500 mr-1" />
           <span className="text-gray-500">{item.category}</span>
@@ -53,6 +55,7 @@ const MenuCard = ({ item, onDelete }) => {
   );
 };
 
+// Add Menu Item Modal
 const AddMenuItemModal = ({ isOpen, onClose, onAdd, existingCategories }) => {
   const [newItem, setNewItem] = useState({
     name: '',
@@ -61,35 +64,29 @@ const AddMenuItemModal = ({ isOpen, onClose, onAdd, existingCategories }) => {
     description: '',
     image: '/ayamkecap.jpg'
   });
-  
+
   const [newCategory, setNewCategory] = useState('');
   const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
-    if (name === 'price') {
-      const numValue = parseFloat(value) || 0;
-      setNewItem({ ...newItem, [name]: numValue });
-    } else {
-      setNewItem({ ...newItem, [name]: value });
-    }
+    setNewItem({ ...newItem, [name]: value });
   };
-  
+
   const handleSubmit = () => {
     if (!newItem.name || (!showNewCategoryInput && !newItem.category) || (showNewCategoryInput && !newCategory) || !newItem.description) {
       alert('Please fill all required fields');
       return;
     }
-    
+
     const newId = Math.floor(Math.random() * 1000) + 10;
-    
+
     onAdd({
       id: newId,
       ...newItem,
       category: showNewCategoryInput ? newCategory : newItem.category
     });
-    
+
     setNewItem({
       name: '',
       price: '',
@@ -101,22 +98,22 @@ const AddMenuItemModal = ({ isOpen, onClose, onAdd, existingCategories }) => {
     setShowNewCategoryInput(false);
     onClose();
   };
-  
+
   if (!isOpen) return null;
-  
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
         <div className="flex justify-between items-center bg-emerald-500 text-white px-6 py-4">
           <h3 className="text-xl font-bold">Add New Menu Item</h3>
-          <button 
+          <button
             onClick={onClose}
             className="text-white hover:text-emerald-100"
           >
             <X size={24} />
           </button>
         </div>
-        
+
         <div className="p-6">
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
@@ -131,7 +128,7 @@ const AddMenuItemModal = ({ isOpen, onClose, onAdd, existingCategories }) => {
               className="border rounded-md w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
-          
+
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="price">
               Price
@@ -147,7 +144,7 @@ const AddMenuItemModal = ({ isOpen, onClose, onAdd, existingCategories }) => {
               className="border rounded-md w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
-          
+
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="category">
               Category
@@ -193,7 +190,7 @@ const AddMenuItemModal = ({ isOpen, onClose, onAdd, existingCategories }) => {
               </div>
             )}
           </div>
-          
+
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
               Description
@@ -207,7 +204,7 @@ const AddMenuItemModal = ({ isOpen, onClose, onAdd, existingCategories }) => {
               rows="3"
             ></textarea>
           </div>
-          
+
           <div className="flex justify-end space-x-3 mt-6">
             <button
               type="button"
@@ -230,6 +227,7 @@ const AddMenuItemModal = ({ isOpen, onClose, onAdd, existingCategories }) => {
   );
 };
 
+// Main Menu Component
 const Menu = () => {
   const [menu, setMenu] = useState(menuItems);
   const [searchTerm, setSearchTerm] = useState('');
@@ -239,15 +237,18 @@ const Menu = () => {
   const [sortBy, setSortBy] = useState('name');
   const [isLoading, setIsLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [userRole, setUserRole] = useState('admin');
+  const [userName, setUserName] = useState('Admin'); // Replace with dynamic userName here
 
   useEffect(() => {
     const uniqueCategories = ['All', ...new Set(menuItems.map(item => item.category))];
     setCategories(uniqueCategories);
-    
+
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 800);
-    
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -257,7 +258,7 @@ const Menu = () => {
 
   const handleAddItem = (newItem) => {
     setMenu([...menu, newItem]);
-    
+
     if (!categories.includes(newItem.category)) {
       setCategories([...categories, newItem.category]);
     }
@@ -292,158 +293,65 @@ const Menu = () => {
       return 0;
     });
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-pulse flex flex-col items-center">
-          <div className="h-16 w-16 bg-gray-200 rounded-full mb-4"></div>
-          <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
-          <div className="h-3 bg-gray-200 rounded w-16"></div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-800 mb-4 md:mb-0">
-            <span className="text-emerald-600">Menu</span> Management
-          </h2>
-          
-          <div className="flex items-center space-x-2">
-            <button 
-              className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-md flex items-center transition-all duration-300 shadow-md"
-              onClick={() => setIsAddModalOpen(true)}
-            >
-              <PlusCircle size={18} className="mr-2" />
-              Add Item
-            </button>
+    <div className="flex">
+      <Sidebar
+        userRole={userRole}
+        userName={userName} // Pass dynamic username here
+        onLogout={() => console.log('Logged out')}
+        activeTab="menu"
+        setActiveTab={() => {}}
+        isCollapsed={isSidebarCollapsed}
+        toggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+      />
+      <div className={`flex-1 p-6 transition-all duration-300 ease-in-out ${isSidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-800 mb-4 md:mb-0">
+              <span className="text-emerald-600">Menu</span> Management
+            </h2>
+            <div className="flex items-center space-x-2">
+              <button
+                className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-md flex items-center transition-all duration-300 shadow-md"
+                onClick={() => setIsAddModalOpen(true)}
+              >
+                <PlusCircle size={18} className="mr-2" />
+                Add Item
+              </button>
+            </div>
+          </div>
+
+          <div className="mb-8 flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
+            <div className="relative flex-grow">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search size={18} className="text-gray-400" />
+              </div>
+              <input
+                type="text"
+                placeholder="Search menu items..."
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-md w-full focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300"
+                value={searchTerm}
+                onChange={handleSearch}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredMenu.map((item, index) => (
+              <div key={item.id} className="animate-fadeIn" style={{ animationDelay: `${index * 100}ms` }}>
+                <MenuCard item={item} onDelete={handleDelete} />
+              </div>
+            ))}
           </div>
         </div>
-        
-        <div className="mb-8 flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
-          <div className="relative flex-grow">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search size={18} className="text-gray-400" />
-            </div>
-            <input
-              type="text"
-              placeholder="Search menu items..."
-              className="pl-10 pr-4 py-2 border border-gray-300 rounded-md w-full focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300"
-              value={searchTerm}
-              onChange={handleSearch}
-            />
-          </div>
-          
-          <div className="relative">
-            <button 
-              onClick={() => setIsFilterOpen(!isFilterOpen)}
-              className="flex items-center justify-between w-full md:w-48 px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 transition-all duration-300"
-            >
-              <div className="flex items-center">
-                <Filter size={18} className="mr-2 text-emerald-500" />
-                <span>Filters</span>
-              </div>
-              <ChevronDown size={18} className={`transition-transform duration-300 ${isFilterOpen ? 'transform rotate-180' : ''}`} />
-            </button>
-            
-            {isFilterOpen && (
-              <div className="absolute z-10 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-2">
-                <div className="mb-4">
-                  <h3 className="text-sm font-medium text-gray-700 mb-2">Category</h3>
-                  <div className="space-y-2">
-                    {categories.map(category => (
-                      <button
-                        key={category}
-                        onClick={() => handleCategoryChange(category)}
-                        className={`block w-full text-left px-3 py-2 rounded-md ${selectedCategory === category ? 'bg-emerald-100 text-emerald-700' : 'hover:bg-gray-100'}`}
-                      >
-                        {category}
-                      </button>
-                    ))}
-                  </div>
-                </div>  
-                
-                <div>
-                  <h3 className="text-sm font-medium text-gray-700 mb-2">Sort by</h3>
-                  <div className="space-y-2">
-                    <button
-                      onClick={() => handleSortChange('name')}
-                      className={`block w-full text-left px-3 py-2 rounded-md ${sortBy === 'name' ? 'bg-emerald-100 text-emerald-700' : 'hover:bg-gray-100'}`}
-                    >
-                      Name
-                    </button>
-                    <button
-                      onClick={() => handleSortChange('price')}
-                      className={`block w-full text-left px-3 py-2 rounded-md ${sortBy === 'price' ? 'bg-emerald-100 text-emerald-700' : 'hover:bg-gray-100'}`}
-                    >
-                      Price
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-        
-        {filteredMenu.length === 0 ? (
-          <div className="text-center py-12 bg-gray-50 rounded-lg border border-dashed border-gray-300">
-            <p className="text-gray-500 text-lg">No menu items found matching your criteria.</p>
-            <button 
-              onClick={() => {
-                setSearchTerm('');
-                setSelectedCategory('All');
-              }}
-              className="mt-4 text-emerald-600 hover:text-emerald-800 font-medium"
-            >
-              Clear filters
-            </button>
-          </div>
-        ) : (
-          <>
-            <div className="flex justify-between items-center mb-4 px-2">
-              <p className="text-gray-600">
-                Showing <span className="font-medium">{filteredMenu.length}</span> items
-                {selectedCategory !== 'All' && (
-                  <span> in <span className="font-medium">{selectedCategory}</span></span>
-                )}
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredMenu.map((item, index) => (
-                <div 
-                  key={item.id} 
-                  className="animate-fadeIn"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <MenuCard item={item} onDelete={handleDelete} />
-                </div>
-              ))}
-            </div>
-          </>
-        )}
       </div>
-      
-      {}
-      <AddMenuItemModal 
+
+      <AddMenuItemModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onAdd={handleAddItem}
         existingCategories={categories}
       />
-      
-      <style jsx>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.5s ease-out forwards;
-        }
-      `}</style>
     </div>
   );
 };
