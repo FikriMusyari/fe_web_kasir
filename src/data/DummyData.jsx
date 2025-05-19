@@ -178,7 +178,7 @@ export const mockTopProducts = [
 
 export const businessInfo = {
   name: "Warung Sekre",
-  address: "Jalan Uin unggul blkg Fst yhh",
+  address: "SEKRE HIMATIF, GEDUNG GB",
   phone: "+62 812-3456-7890",
   email: "warungsekre@example.com",
   operatingHours: {

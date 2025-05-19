@@ -8,13 +8,30 @@ import HistoryPage from './pages/History';
 import MenuPage from './pages/Menu';
 import ReportPage from './pages/Report';
 import SettingsPage from './pages/Settings';
-import { userCredentials } from './data/DummyData';
+import { getCurrentUser } from "./data/Api.js";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [userName, setUserName] = useState('');
 
+  const Profile = () => {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userData = await getCurrentUser();
+      if (userData) {
+        setUser(userData); // Set user data ke state jika berhasil
+      } else {
+        console.log("Gagal mendapatkan data pengguna");
+      }
+    };
+
+    fetchUserData(); // Panggil fungsi untuk fetch data pengguna saat komponen pertama kali di-render
+  }, []);}
+
+  // Mengecek status login saat komponen pertama kali dimuat
   useEffect(() => {
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('userRole');
@@ -27,33 +44,21 @@ function App() {
     }
   }, []);
 
-  const handleLogin = async (credentials) => {
-  try {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    const user = userCredentials.find(
-      u => u.username === credentials.username && 
-           u.password === credentials.password
-    );
+  // Fungsi untuk menangani login
+  const ambiltoken  = () => {
+  const token = localStorage.getItem('token');
+  const userRole = localStorage.getItem('userRole');
+  const userName = localStorage.getItem('userName');
 
-    if (user) {
-      localStorage.setItem('token', 'dummy-token');
-      localStorage.setItem('userRole', user.role);
-      localStorage.setItem('userName', user.name);
-      
-      setIsAuthenticated(true);
-      setUserRole(user.role);
-      setUserName(user.name);
-      
-      return { success: true };
-    }
-    
-    return { success: false, message: 'Username atau password salah' };
-  } catch (error) {
-    return { success: false, message: 'Terjadi kesalahan saat login' };
+  // Jika token, role, atau username tidak ditemukan, return null
+  if (!token || !userRole || !userName) {
+    return null;
   }
+
+  return { token, userRole, userName };
 };
 
+  // Fungsi untuk menangani logout
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userRole');
@@ -62,16 +67,7 @@ function App() {
     setUserRole(null);
     setUserName('');
   };
-function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
-    </Router>
-  );
-}
+
   return (
     <Routes>
       <Route 
@@ -80,7 +76,7 @@ function App() {
           isAuthenticated ? (
             <Navigate to="/dashboard" replace />
           ) : (
-            <Login onLogin={handleLogin} />
+            <Login onLogin={ambiltoken} />
           )
         } 
       />
@@ -162,8 +158,7 @@ function App() {
           </ProtectedRoute>
         } 
       />
-      
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

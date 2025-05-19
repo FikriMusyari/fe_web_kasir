@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LockKeyhole, User } from 'lucide-react';
+import { loginUser } from "../data/Api.js";
+
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
@@ -12,16 +14,26 @@ const Login = ({ onLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setError(''); // Reset error before starting login
 
     try {
-      const result = await onLogin({ username, password });
-      if (result.success) {
-        navigate('/dashboard');
+      const result = await loginUser({ username, password });
+      const hasil = result.data
+      console.log(hasil)
+      if (hasil && hasil.token) {
+        // Save token and user data to localStorage
+        localStorage.setItem('token', hasil.token);
+        localStorage.setItem('userRole', hasil.role);
+        localStorage.setItem('userName', hasil.nama);
+    
+
+        onLogin()
+
+        navigate('/dashboard'); // Redirect to dashboard after successful login
       } else {
-        setError(result.message);
+        setError(result.message || 'Username atau password salah');
       }
-    } catch {
+    } catch (err) {
       setError('Terjadi kesalahan saat login');
     } finally {
       setIsLoading(false);
@@ -107,7 +119,7 @@ const Login = ({ onLogin }) => {
           </form>
 
           <div className="bg-gray-50 text-center py-4 text-xs text-gray-500">
-            © {new Date().getFullYear()} POS System. All rights reserved.
+            © {new Date().getFullYear()} Web Kantin. All rights reserved.
           </div>
         </div>
       </div>
