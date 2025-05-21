@@ -1,6 +1,19 @@
+// src/components/Sidebar.jsx
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, ShoppingCart, Utensils, BarChart, Settings, LogOut, History, ChevronLeft, Menu, User } from 'lucide-react';
+import {
+  Home,
+  ShoppingCart,
+  Utensils,
+  BarChart,
+  Settings,
+  LogOut,
+  History,
+  ChevronLeft,
+  Menu,
+  User,
+  UserPlus
+} from 'lucide-react';
 
 const Sidebar = ({ userRole, userName, onLogout, activeTab, setActiveTab, isCollapsed, toggleSidebar }) => {
   const location = useLocation();
@@ -48,6 +61,13 @@ const Sidebar = ({ userRole, userName, onLogout, activeTab, setActiveTab, isColl
       path: '/settings',
       icon: <Settings size={20} />,
       roles: ['admin']
+    },
+    {
+      id: 'add-account',
+      label: 'Tambah Akun',
+      path: '/add-account',
+      icon: <UserPlus size={20} />,
+      roles: ['admin']
     }
   ];
 
@@ -58,11 +78,13 @@ const Sidebar = ({ userRole, userName, onLogout, activeTab, setActiveTab, isColl
     navigate(path);
   };
 
-  const currentTab = activeTab || location.pathname.split('/')[1] || 'dashboard';
+  const currentTab = activeTab || location.pathname.split('/')[1];
 
   return (
     <div
-      className={`bg-indigo-700 text-white h-screen flex flex-col transition-all duration-300 ease-in-out ${isCollapsed ? 'w-20' : 'w-64'} fixed top-0 left-0 bottom-0`}
+      className={`bg-indigo-700 text-white h-screen flex flex-col transition-all duration-300 ease-in-out ${
+        isCollapsed ? 'w-20' : 'w-64'
+      } fixed top-0 left-0 bottom-0`}
     >
       <div className="flex justify-end p-2">
         <button
@@ -93,7 +115,9 @@ const Sidebar = ({ userRole, userName, onLogout, activeTab, setActiveTab, isColl
               <li key={item.id}>
                 <button
                   onClick={() => handleTabChange(item.id, item.path)}
-                  className={`flex items-center w-full ${isCollapsed ? 'justify-center px-2' : 'px-4'} py-2 rounded-md transition-colors ${
+                  className={`flex items-center w-full ${
+                    isCollapsed ? 'justify-center px-2' : 'px-4'
+                  } py-2 rounded-md transition-colors ${
                     currentTab === item.id
                       ? 'bg-indigo-800 text-white'
                       : 'text-indigo-100 hover:bg-indigo-600'
@@ -116,7 +140,9 @@ const Sidebar = ({ userRole, userName, onLogout, activeTab, setActiveTab, isColl
                   <User size={16} />
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm font-medium text-white">{userName || (userRole === 'admin' ? 'Admin' : 'Kasir')}</p>
+                  <p className="text-sm font-medium text-white">
+                    {userName || (userRole === 'admin' ? 'Admin' : 'Kasir')}
+                  </p>
                   <p className="text-xs text-indigo-300">Online</p>
                 </div>
               </div>

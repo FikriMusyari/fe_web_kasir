@@ -2,7 +2,6 @@ import axios from 'axios';
 
 const BASE_URL = 'https://api-kantin-hono.up.railway.app/api';
 
-// Fungsi untuk mengambil semua pengguna
 export const getUsers = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/users`);
@@ -13,7 +12,6 @@ export const getUsers = async () => {
   }
 };
 
-// Fungsi untuk mengambil data pengguna berdasarkan ID
 export const getUserById = async (userId) => {
   try {
     const response = await axios.get(`${BASE_URL}/users/${userId}`);
@@ -24,16 +22,13 @@ export const getUserById = async (userId) => {
   }
 };
 
-// Fungsi untuk mengambil data pengguna yang sedang login
 export const getCurrentUser = async () => {
   try {
-    // Ambil token dari localStorage
     const token = localStorage.getItem("token");
 
-    // Jika token ada, kirimkan di header Authorization
     const response = await axios.get(`${BASE_URL}/users/current`, {
       headers: {
-        "Authorization": `Bearer ${token}`, // Menyertakan token di header
+        "Authorization": `Bearer ${token}`, 
       },
     });
 
@@ -44,7 +39,6 @@ export const getCurrentUser = async () => {
   }
 };
 
-// Fungsi untuk login
 export const loginUser = async (credentials) => {
   try {
     const response = await axios.post(`${BASE_URL}/users/login`, credentials);
@@ -54,8 +48,27 @@ export const loginUser = async (credentials) => {
     return null;
   }
 };
+export const addUser = async (newUser) => {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/users`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify(newUser)
+    });
 
-// Fungsi untuk mengambil semua produk
+    if (!response.ok) throw new Error('Gagal menambahkan user');
+
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { success: false };
+  }
+};
+
+
 export const getProducts = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/products`);
@@ -76,7 +89,6 @@ export const buatProducts = async () => {
   }
 };
 
-// Fungsi untuk mengambil semua transaksi
 export const getTransactions = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/transactions`);
@@ -87,7 +99,6 @@ export const getTransactions = async () => {
   }
 };
 
-// Fungsi untuk mengambil laporan
 export const getReports = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/reports`);

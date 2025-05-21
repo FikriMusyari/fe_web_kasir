@@ -14,7 +14,7 @@ const TransactionPage = ({ userRole, userName, onLogout }) => {
   const [cashPaid, setCashPaid] = useState('');
   
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [activeTab, setActiveTab] = useState('dashboard');  // default tab active
+  const [activeTab, setActiveTab] = useState('transaksi'); 
   
   const filteredItems = menuItems.filter(item => 
     item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

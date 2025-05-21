@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LockKeyhole, User } from 'lucide-react';
 import { loginUser } from "../data/Api.js";
-
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
@@ -11,25 +10,108 @@ const Login = ({ onLogin }) => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const loadGoogleScript = () => {
+      if (document.querySelector('script#google-login')) {
+        return;
+      }
+      
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.id = 'google-login';
+      script.async = true;
+      script.defer = true;
+      document.body.appendChild(script);
+      
+      script.onload = initializeGoogleSignIn;
+    };
+
+    loadGoogleScript();
+    
+    return () => {
+      const scriptTag = document.querySelector('script#google-login');
+      if (scriptTag) {
+        scriptTag.remove();
+      }
+      const googleDiv = document.getElementById('g_id_onload');
+      if (googleDiv) {
+        googleDiv.remove();
+      }
+    };
+  }, []);
+
+  const initializeGoogleSignIn = () => {
+    window.google?.accounts.id.initialize({
+      client_id: 'YOUR_GOOGLE_CLIENT_ID', 
+      callback: handleGoogleResponse,
+      auto_select: false,
+      cancel_on_tap_outside: true,
+    });
+    
+    window.google?.accounts.id.renderButton(
+      document.getElementById('googleSignInDiv'),
+      { 
+        theme: 'outline',
+        size: 'large',
+        width: '100%',
+        text: 'continue_with',
+        shape: 'rectangular', 
+      }
+    );
+  };
+
+  const handleGoogleResponse = async (response) => {
+    try {
+      setIsLoading(true);
+      setError('');
+      
+      const { credential } = response;
+      
+   
+      const result = await fetch('/api/auth/google', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token: credential }),
+      });
+      
+      const data = await result.json();
+      
+      if (data.success) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userRole', data.role);
+        localStorage.setItem('userName', data.nama);
+        
+        onLogin();
+        navigate('/dashboard');
+      } else {
+        setError(data.message || 'Gagal login dengan Google');
+      }
+    } catch (err) {
+      console.error('Google login error:', err);
+      setError('Terjadi kesalahan saat login dengan Google');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(''); // Reset error before starting login
+    setError(''); 
 
     try {
       const result = await loginUser({ username, password });
-      const hasil = result.data
-      console.log(hasil)
+      const hasil = result.data;
+      console.log(hasil);
       if (hasil && hasil.token) {
-        // Save token and user data to localStorage
         localStorage.setItem('token', hasil.token);
         localStorage.setItem('userRole', hasil.role);
         localStorage.setItem('userName', hasil.nama);
-    
 
-        onLogin()
-
-        navigate('/dashboard'); // Redirect to dashboard after successful login
+        onLogin();
+        navigate('/dashboard'); 
       } else {
         setError(result.message || 'Username atau password salah');
       }
@@ -116,6 +198,13 @@ const Login = ({ onLogin }) => {
                 'Masuk'
               )}
             </button>
+            
+            <div className="relative flex items-center justify-center my-4">
+              <div className="border-t border-gray-300 absolute w-full"></div>
+              <div className="bg-white px-3 relative text-sm text-gray-500">atau</div>
+            </div>
+            
+            <div id="googleSignInDiv" className="flex justify-center"></div>
           </form>
 
           <div className="bg-gray-50 text-center py-4 text-xs text-gray-500">

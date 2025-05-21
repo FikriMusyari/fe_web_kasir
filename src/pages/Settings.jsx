@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
+import { businessInfo } from '../data/DummyData'; 
 
 const Header = ({ title, userRole, onLogout }) => {
   return (
@@ -17,16 +18,15 @@ const Header = ({ title, userRole, onLogout }) => {
 
 const SettingsPage = ({ userRole, onLogout }) => {
   const [generalSettings, setGeneralSettings] = useState({
-    restaurantName: 'Warung Sekre',
-    address: 'Jl. UWINNNNN',
-    phone: '0812-3456-7890',
-    email: 'contact@warungsekre.com',
-    taxPercentage: 10
+    restaurantName: businessInfo.name,
+    address: businessInfo.address,
+    phone: businessInfo.phone,
+    email: businessInfo.email,
+    taxPercentage: 10 
   });
 
   const [printerSettings, setPrinterSettings] = useState({
-    receiptPrinter: 'EPSON TM-T82COBA"',
-    kitchenPrinter: 'EPSON TM-T88V (ak ngayal y)',
+    receiptPrinter: 'EPSON TM-T82',
     autoPrint: true
   });
 
@@ -86,7 +86,6 @@ const SettingsPage = ({ userRole, onLogout }) => {
             <h2 className="text-2xl font-semibold mb-6">System Settings</h2>
             
             <form onSubmit={handleSaveSettings}>
-              {/* General Settings */}
               <div className="mb-8">
                 <h3 className="text-lg font-medium border-b pb-2 mb-4">General Settings</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -140,10 +139,39 @@ const SettingsPage = ({ userRole, onLogout }) => {
                       className="w-full px-3 py-2 border border-gray-300 rounded-md"
                     />
                   </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Operating Hours</label>
+                    <input
+                      type="text"
+                      name="operatingHours"
+                      value={`${businessInfo.operatingHours.open} - ${businessInfo.operatingHours.close}, ${businessInfo.operatingHours.days}`}
+                      disabled
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Tax ID Number</label>
+                    <input
+                      type="text"
+                      name="taxIdentificationNumber"
+                      value={businessInfo.taxIdentificationNumber}
+                      disabled
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Founded Year</label>
+                    <input
+                      type="text"
+                      name="foundedYear"
+                      value={businessInfo.foundedYear}
+                      disabled
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50"
+                    />
+                  </div>
                 </div>
               </div>
               
-              {/* Printer Settings */}
               <div className="mb-8">
                 <h3 className="text-lg font-medium border-b pb-2 mb-4">Printer Settings</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -189,7 +217,6 @@ const SettingsPage = ({ userRole, onLogout }) => {
                 </div>
               </div>
               
-              {/* Backup Settings */}
               <div className="mb-8">
                 <h3 className="text-lg font-medium border-b pb-2 mb-4">Backup & Data</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -261,7 +288,6 @@ const SettingsPage = ({ userRole, onLogout }) => {
                 </div>
               </div>
               
-              {/* Save and Cancel buttons */}
               <div className="flex justify-end mt-6">
                 <button
                   type="button"
