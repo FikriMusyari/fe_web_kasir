@@ -5,7 +5,6 @@ import {
   ShoppingCart,
   Utensils,
   BarChart,
-  Settings,
   LogOut,
   History,
   ChevronLeft,
@@ -45,7 +44,7 @@ const Sidebar = ({ userRole, userName, onLogout, activeTab, setActiveTab, isColl
       label: 'Kelola Menu',
       path: '/menu',
       icon: <Utensils size={20} />,
-      roles: ['admin']
+      roles: ['admin', 'kasir']
     },
     {
       id: 'reports',

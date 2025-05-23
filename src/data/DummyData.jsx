@@ -1,17 +1,4 @@
-export const menuItems = [
-  { id: 1, name: "Ayam Cabe Ijo", price: 25000, costPrice: 15000, category: "Ayam", image: "/ayamcabeijo.jpg" },
-  { id: 2, name: "Ayam Cabe Merah", price: 23000, costPrice: 13000, category: "Ayam", image: "/ayamcabemerah.jpg" },
-  { id: 3, name: "Ayam Kecap", price: 20000, costPrice: 12000, category: "Ayam", image: "/ayamkecap.jpg" },
-  { id: 4, name: "Batagor", price: 15000, costPrice: 8000, category: "Snack", image: "/ayamkecap.jpg" },
-  { id: 5, name: "Lontong Pecal Telur", price: 18000, costPrice: 10000, category: "Main Course", image: "/ayamkecap.jpg" },
-  { id: 6, name: "Nasi Goreng Spesial", price: 22000, costPrice: 12000, category: "Main Course", image: "/nasigoreng.jpg" },
-  { id: 7, name: "Es Teh Manis", price: 5000, costPrice: 2000, category: "Minuman", image: "/ayamkecap.jpg" },
-  { id: 8, name: "Air Mineral", price: 3000, costPrice: 1000, category: "Minuman", image: "/nasigoreng.jpg" },
-  { id: 9, name: "Nasi Goreng", price: 18000, costPrice: 10000, category: "Nasi", image: "/nasigoreng.jpg" },
-  { id: 10, name: "Minas", price: 25000, costPrice: 15000, category: "Nasi", image: "/minas.jpeg" },
-  { id: 11, name: "Sate", price: 20000, costPrice: 12000, category: "Sate", image: "/ayamkecap.jpg" },
-  { id: 12, name: "Lontong Pecal", price: 15000, costPrice: 8000, category: "Sarapan Pagi", image: "/ayamkecap.jpg" }
-];
+
 
 export const transactionHistory = {
   summary: {
@@ -22,12 +9,6 @@ export const transactionHistory = {
   },
   transactions: [
     { date: "9 Mei 2025 pukul 14.30", id: "TBX: 009", customer: "Audi", items: 4, total: "Rp 40.000", user_id: "kasir1", paymentMethod: "Cash" },
-    { date: "4 Mei 2025 pukul 17.20", id: "TBX: 008", customer: "PKBIII", items: 4, total: "Rp 64.000", user_id: "kasir1", paymentMethod: "Digital Wallet" },
-    { date: "3 Mei 2025 pukul 11.30", id: "TBX: 006", customer: "DILE", items: 4, total: "Rp 110.000", user_id: "admin", paymentMethod: "Bank Transfer" },
-    { date: "3 Mei 2025 pukul 09.15", id: "TBX: 005", customer: "ALUP3", items: 7, total: "Rp 155.000", user_id: "kasir1", paymentMethod: "Credit Card" },
-    { date: "2 Mei 2025 pukul 10.45", id: "TBX: 003", customer: "ALUP2", items: 3, total: "Rp 95.000", user_id: "admin", paymentMethod: "Bank Transfer" },
-    { date: "1 Mei 2025 pukul 16.15", id: "TBX: 002", customer: "DLACNTI", items: 2, total: "Rp 57.000", user_id: "kasir1", paymentMethod: "Cash" },
-    { date: "1 Mei 2025 pukul 14.30", id: "TBX: 001", customer: "PikrrI", items: 5, total: "Rp 124.500", user_id: "kasir1", paymentMethod: "Credit Card" }
   ]
 };
 

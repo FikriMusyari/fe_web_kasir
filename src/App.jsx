@@ -5,7 +5,7 @@ import Dashboard from './pages/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import TransactionPage from './pages/Transaction';
 import HistoryPage from './pages/History';
-import MenuPage from './pages/Menu';
+import Menu from './pages/Menu';
 import ReportPage from './pages/Report';
 import AddAccountPage from './pages/AddAccount';
 
@@ -89,8 +89,8 @@ function App() {
       <Route
         path="/menu"
         element={
-          <ProtectedRoute isAuthenticated={isAuthenticated} allowedRoles={['admin']}>
-            <MenuPage userRole={userRole} userName={userName} onLogout={handleLogout} />
+          <ProtectedRoute isAuthenticated={isAuthenticated} allowedRoles={['admin', 'kasir']}>
+            <Menu userRole={userRole} userName={userName} onLogout={handleLogout} />
           </ProtectedRoute>
         }
       />
