@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom';
 import Sidebar from '../components/Sidebar'; // Pastikan path sesuai dengan struktur proyekmu
 import RoleRestricted from '../components/RoleRestricted';
 import { FaPlus, FaSearch, FaEdit, FaTrash, FaPlusCircle, FaMinusCircle } from 'react-icons/fa';
-import { menuItems } from '../data/DummyData';
 
 const TransactionPage = ({ userRole, userName, onLogout }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -16,10 +15,6 @@ const TransactionPage = ({ userRole, userName, onLogout }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState('transaksi'); 
   
-  const filteredItems = menuItems.filter(item => 
-    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   const addToCart = (item) => {
     const existingItemIndex = selectedItems.findIndex(i => i.id === item.id);

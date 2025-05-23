@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { CreditCard, ClipboardList, BarChart3, History, User, Coffee, TrendingUp, ShoppingCart, Package, ReceiptText, LineChart, MapPin, Phone, Clock, ChevronLeft, Menu } from 'lucide-react';
+import { CreditCard, ClipboardList, User, Coffee, TrendingUp, ShoppingCart, Package, ReceiptText, LineChart, MapPin, Phone, Clock } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import { mockTopProducts, transactionHistory, businessInfo } from '../data/DummyData';
 

@@ -71,21 +71,83 @@ export const addUser = async (newUser) => {
 
 export const getProducts = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/products`);
+     const token = localStorage.getItem("token");
+    const response = await axios.get(`${BASE_URL}/products`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Terjadi kesalahan saat mengambil data produk:', error);
-    return [];
+    return null;
   }
 };
 
-export const buatProducts = async () => {
+export const buatProducts = async (dataproduk) => {
+  const token = localStorage.getItem('token');
   try {
-    const response = await axios.get(`${BASE_URL}/products`);
+    const response = await axios.post(`${BASE_URL}/products`, dataproduk, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      }
+    });
     return response.data;
   } catch (error) {
-    console.error('Terjadi kesalahan saat mengambil data produk:', error);
-    return [];
+    return null
+  }
+};
+
+export const updateProduct = async (productId, updatedData) => {
+  const token = localStorage.getItem('token');
+  try {
+    const response = await axios.patch(`${BASE_URL}/products/${productId}`, updatedData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      }
+    });
+    console.log(response)
+    return response.data;
+  } catch (error) {
+    console.error(`Gagal mengupdate produk dengan ID ${productId}:`, error);
+    return null;
+  }
+};
+
+export const searchProduct = async (query) => {
+  const token = localStorage.getItem('token');
+  try {
+    const response = await axios.get(`${BASE_URL}/products/search?`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      params: {
+        nama: query,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Gagal menghapus produk dengan ID ${productId}:`, error);
+    return null;
+  }
+};
+
+export const deleteProduct = async (productId) => {
+  const token = localStorage.getItem('token');
+  try {
+    const response = await axios.delete(`${BASE_URL}/products/${productId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Gagal menghapus produk dengan ID ${productId}:`, error);
+    return null;
   }
 };
 

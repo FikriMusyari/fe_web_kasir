@@ -104,7 +104,6 @@ const Login = ({ onLogin }) => {
     try {
       const result = await loginUser({ username, password });
       const hasil = result.data;
-      console.log(hasil);
       if (hasil && hasil.token) {
         localStorage.setItem('token', hasil.token);
         localStorage.setItem('userRole', hasil.role);

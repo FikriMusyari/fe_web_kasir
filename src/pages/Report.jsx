@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar'; // Pastikan path sesuai dengan struktur proyekmu // Pastikan Sidebar diimpor dengan benar
 import { DollarSign, TrendingUp, Package, Award, Calendar, ArrowUpRight } from 'lucide-react';
 import { mockMonthlyData, mockTopProducts } from '../data/DummyData';
