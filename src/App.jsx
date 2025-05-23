@@ -1,4 +1,3 @@
-// src/App.jsx
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Login from './pages/Login';
@@ -8,7 +7,6 @@ import TransactionPage from './pages/Transaction';
 import HistoryPage from './pages/History';
 import MenuPage from './pages/Menu';
 import ReportPage from './pages/Report';
-import SettingsPage from './pages/Settings';
 import AddAccountPage from './pages/AddAccount';
 
 function App() {
@@ -102,15 +100,6 @@ function App() {
         element={
           <ProtectedRoute isAuthenticated={isAuthenticated} allowedRoles={['admin']}>
             <ReportPage userRole={userRole} userName={userName} onLogout={handleLogout} />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/settings"
-        element={
-          <ProtectedRoute isAuthenticated={isAuthenticated} allowedRoles={['admin']}>
-            <SettingsPage userRole={userRole} userName={userName} onLogout={handleLogout} />
           </ProtectedRoute>
         }
       />

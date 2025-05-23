@@ -1,4 +1,3 @@
-// src/components/Sidebar.jsx
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
@@ -53,13 +52,6 @@ const Sidebar = ({ userRole, userName, onLogout, activeTab, setActiveTab, isColl
       label: 'Laporan',
       path: '/reports',
       icon: <BarChart size={20} />,
-      roles: ['admin']
-    },
-    {
-      id: 'settings',
-      label: 'Pengaturan',
-      path: '/settings',
-      icon: <Settings size={20} />,
       roles: ['admin']
     },
     {
