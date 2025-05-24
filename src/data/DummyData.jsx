@@ -26,91 +26,6 @@ export const mockTransactions = [
     cashier: 'Pikri',
     paymentMethod: 'Credit Card',
     status: 'completed'
-  },
-  {
-    id: 'TRX-002',
-    date: '2025-05-01T16:15:00',
-    customer: 'DLACNTI',
-    items: [
-      { name: 'Nasi Goreng', quantity: 1, price: 18000 },
-      { name: 'Es Teh Manis', quantity: 1, price: 5000 }
-    ],
-    itemCount: 2,
-    total: 57000,
-    cashier: 'Pikri',
-    paymentMethod: 'Cash',
-    status: 'completed'
-  },
-  {
-    id: 'TRX-003',
-    date: '2025-05-02T10:45:00',
-    customer: 'ALUP2',
-    items: [
-      { name: 'Ayam Kecap', quantity: 1, price: 20000 },
-      { name: 'Air Mineral', quantity: 1, price: 3000 },
-      { name: 'Es Teh Manis', quantity: 1, price: 5000 }
-    ],
-    itemCount: 3,
-    total: 95000,
-    cashier: 'Dila',
-    paymentMethod: 'Bank Transfer',
-    status: 'pending'
-  },
-  {
-    id: 'TRX-005',
-    date: '2025-05-03T09:15:00',
-    customer: 'ALUP3',
-    items: [
-      { name: 'Ayam Bakar Madu', quantity: 3, price: 22000 },
-      { name: 'Es Teh Manis', quantity: 4, price: 5000 }
-    ],
-    itemCount: 7,
-    total: 155000,
-    cashier: 'Pikri',
-    paymentMethod: 'Credit Card',
-    status: 'cancelled'
-  },
-  {
-    id: 'TRX-006',
-    date: '2025-05-03T11:30:00',
-    customer: 'DILE',
-    items: [
-      { name: 'Nasi Goreng Spesial', quantity: 2, price: 22000 },
-      { name: 'Es Teh Manis', quantity: 2, price: 5000 }
-    ],
-    itemCount: 4,
-    total: 110000,
-    cashier: 'Dila',
-    paymentMethod: 'Bank Transfer',
-    status: 'processing'
-  },
-  {
-    id: 'TRX-008',
-    date: '2025-05-04T17:20:00',
-    customer: 'PKBIII',
-    items: [
-      { name: 'Nasi Goreng', quantity: 2, price: 18000 },
-      { name: 'Es Teh Manis', quantity: 2, price: 5000 }
-    ],
-    itemCount: 4,
-    total: 64000,
-    cashier: 'Pikri',
-    paymentMethod: 'Digital Wallet',
-    status: 'completed'
-  },
-  {
-    id: 'TRX-009',
-    date: '2025-05-09T14:30:00',
-    customer: 'Audi',
-    items: [
-      { name: 'Nasi Goreng', quantity: 2, price: 18000 },
-      { name: 'Es Teh Manis', quantity: 2, price: 5000 }
-    ],
-    itemCount: 4,
-    total: 40000,
-    cashier: 'Pikri',
-    paymentMethod: 'Cash',
-    status: 'completed'
   }
 ];
 
@@ -134,12 +49,6 @@ export const salesReport = {
     { month: "Mei", bestSeller: "Nasi Goreng Spesial", salesCount: "224 penjualan" }
   ]
 };
-
-export const userCredentials = [
-  { user_id: "admin_01", username: "admin", password: "admin123", role: "admin", name: "Dila" },
-  { user_id: "kasir_01", username: "kasir1", password: "pikri123", role: "kasir", name: "Pikri" },
-  { user_id: "kasir_02", username: "kasir2", password: "alup123", role: "kasir", name: "Alup" }
-];
 
 export const mockMonthlyData = [
   { month: "Januari", revenue: 9500000, orders: 142, avgOrder: 66901 },

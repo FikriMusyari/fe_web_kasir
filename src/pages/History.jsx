@@ -17,48 +17,6 @@ const mockTransactions = [
     paymentMethod: 'Credit Card',
     status: 'completed'
   },
-  { 
-    id: 'TRX-002',
-    date: '2025-05-01T16:15:00', 
-    customer: 'DILACNTI',
-    items: [
-      { name: 'Mie Goreng', quantity: 1, price: 12000 },
-      { name: 'Jus Alpukat', quantity: 1, price: 10000 }
-    ],
-    itemCount: 2,
-    total: 57000,
-    cashier: 'Budi Kasir',
-    paymentMethod: 'Cash',
-    status: 'pending'
-  },
-  { 
-    id: 'TRX-005',
-    date: '2025-05-03T09:15:00', 
-    customer: 'ALUP3',
-    items: [
-      { name: 'Soto Ayam', quantity: 3, price: 15000 },
-      { name: 'Es Teh', quantity: 4, price: 5000 }
-    ],
-    itemCount: 7,
-    total: 195000,
-    cashier: 'Budi Kasir',
-    paymentMethod: 'Credit Card',
-    status: 'cancelled'
-  },
-  { 
-    id: 'TRX-006',
-    date: '2025-05-03T11:30:00', 
-    customer: 'DILE',
-    items: [
-      { name: 'Nasi Goreng Spesial', quantity: 2, price: 20000 },
-      { name: 'Es Kopi Susu', quantity: 2, price: 12000 }
-    ],
-    itemCount: 4,
-    total: 110000,
-    cashier: 'Administrator',
-    paymentMethod: 'Cash',
-    status: 'processing'
-  },
 ];
 
 const StatusBadge = ({ status }) => {
