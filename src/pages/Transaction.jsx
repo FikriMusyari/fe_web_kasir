@@ -1,20 +1,72 @@
-import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import Sidebar from '../components/Sidebar'; // Pastikan path sesuai dengan struktur proyekmu
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Sidebar from '../components/Sidebar'; 
 import RoleRestricted from '../components/RoleRestricted';
-import { FaPlus, FaSearch, FaEdit, FaTrash, FaPlusCircle, FaMinusCircle } from 'react-icons/fa';
+import { Plus, Search, Edit, Trash2, PlusCircle, MinusCircle } from 'lucide-react';
+import { searchProduct, getProducts, getTransactions } from '../data/Api.js'; 
 
 const TransactionPage = ({ userRole, userName, onLogout }) => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedItems, setSelectedItems] = useState([]);
   const [customerName, setCustomerName] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('Cash');
   const [showCustomerInfo, setShowCustomerInfo] = useState(false);
   const [cashPaid, setCashPaid] = useState('');
+  const [menuItems, setMenuItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchLoading, setSearchLoading] = useState(false);
   
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState('transaksi'); 
-  
+
+  const fetchProduct = async () => {
+  try {
+    const response = await getProducts();
+    setMenu(response.data);
+  } catch (error) {
+    console.error('Gagal mengambil data produk:', error);
+  } finally {
+    setLoading(false)
+  }
+};
+
+useEffect(() => {
+  fetchProduct();
+}, []);
+
+  useEffect(() => {
+    const delayedSearch = setTimeout(async () => {
+      if (searchTerm.trim()) {
+        try {
+          setSearchLoading(true);
+          const searchResults = await searchProduct(searchTerm);
+          if (searchResults) {
+            setMenuItems(searchResults);
+          }
+        } catch (err) {
+          console.error('Error searching products:', err);
+        } finally {
+          setSearchLoading(false);
+        }
+      } else {
+        try {
+          setSearchLoading(true);
+          const allProducts = await searchProduct('');
+          if (allProducts) {
+            setMenuItems(allProducts);
+          }
+        } catch (err) {
+          console.error('Error fetching all products:', err);
+        } finally {
+          setSearchLoading(false);
+        }
+      }
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(delayedSearch);
+  }, [searchTerm]);
 
   const addToCart = (item) => {
     const existingItemIndex = selectedItems.findIndex(i => i.id === item.id);
@@ -63,7 +115,7 @@ const TransactionPage = ({ userRole, userName, onLogout }) => {
 
   const total = selectedItems.reduce((sum, item) => sum + item.subtotal, 0);
 
-  const processTransaction = () => {
+  const processTransaction = async () => {
     if (selectedItems.length === 0) {
       alert('Silakan tambahkan item ke transaksi');
       return;
@@ -86,19 +138,51 @@ const TransactionPage = ({ userRole, userName, onLogout }) => {
       status: 'completed'
     };
     
-    console.log('Processing transaction:', transaction);
-    alert('Transaksi berhasil disimpan!');
-    
-    setSelectedItems([]);
-    setCustomerName('');
-    setPaymentMethod('Cash');
-    setShowCustomerInfo(false);
-    setCashPaid('');
+    try {
+      // Send transaction to API
+      const response = await fetch('https://api-kantin-hono.up.railway.app/api/transactions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(transaction)
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log('Transaction saved:', result);
+      alert('Transaksi berhasil disimpan!');
+      
+      // Reset form
+      setSelectedItems([]);
+      setCustomerName('');
+      setPaymentMethod('Cash');
+      setShowCustomerInfo(false);
+      setCashPaid('');
+    } catch (err) {
+      console.error('Error saving transaction:', err);
+      alert('Gagal menyimpan transaksi. Silakan coba lagi.');
+    }
   };
 
   const calculateChange = () => {
     const cashPaidNum = parseFloat(cashPaid);
     return cashPaidNum - total;
+  };
+
+  // Function to refresh transactions (can be called from admin section)
+  const refreshTransactions = async () => {
+    try {
+      const transactions = await getTransactions();
+      console.log('Current transactions:', transactions);
+      // You can use this data to show recent transactions or for admin purposes
+    } catch (err) {
+      console.error('Error fetching transactions:', err);
+    }
   };
 
   return (
@@ -121,7 +205,7 @@ const TransactionPage = ({ userRole, userName, onLogout }) => {
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow p-4 mb-6">
               <div className="relative mb-4">
-                <FaSearch className="absolute left-3 top-3 text-gray-400" />
+                <Search className="absolute left-3 top-3 text-gray-400 w-4 h-4" />
                 <input
                   type="text"
                   placeholder="Cari menu..."
@@ -129,34 +213,60 @@ const TransactionPage = ({ userRole, userName, onLogout }) => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 w-full border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
+                {searchLoading && (
+                  <div className="absolute right-3 top-3">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-indigo-600"></div>
+                  </div>
+                )}
               </div>
               
               <h2 className="font-semibold text-gray-700 mb-3">Menu</h2>
               
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {filteredItems.map(item => (
-                  <div 
-                    key={item.id}
-                    className="border border-gray-200 rounded-md p-3 hover:bg-gray-50 transition-colors cursor-pointer"
-                    onClick={() => addToCart(item)}
+              {loading ? (
+                <div className="text-center py-8">
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                  <p className="mt-2 text-gray-600">Memuat menu...</p>
+                </div>
+              ) : error ? (
+                <div className="text-center py-8 text-red-600">
+                  <p>{error}</p>
+                  <button 
+                    onClick={() => window.location.reload()} 
+                    className="mt-2 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors"
                   >
-                    <h3 className="font-medium text-gray-800">{item.name}</h3>
-                    <p className="text-sm text-gray-500">{item.category}</p>
-                    <div className="flex justify-between items-center mt-2">
-                      <span className="font-semibold text-indigo-600">
-                        {new Intl.NumberFormat('id-ID', {
-                          style: 'currency',
-                          currency: 'IDR',
-                          minimumFractionDigits: 0
-                        }).format(item.price)}
-                      </span>
-                      <button className="text-green-600 hover:text-green-800 transition-colors">
-                        <FaPlus />
-                      </button>
+                    Coba Lagi
+                  </button>
+                </div>
+              ) : menuItems.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  <p>{searchTerm ? 'Tidak ada menu yang ditemukan' : 'Belum ada menu tersedia'}</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {menuItems.map(item => (
+                    <div 
+                      key={item.id}
+                      className="border border-gray-200 rounded-md p-3 hover:bg-gray-50 transition-colors cursor-pointer"
+                      onClick={() => addToCart(item)}
+                    >
+                      <h3 className="font-medium text-gray-800">{item.name || item.nama}</h3>
+                      <p className="text-sm text-gray-500">{item.category || item.kategori}</p>
+                      <div className="flex justify-between items-center mt-2">
+                        <span className="font-semibold text-indigo-600">
+                          {new Intl.NumberFormat('id-ID', {
+                            style: 'currency',
+                            currency: 'IDR',
+                            minimumFractionDigits: 0
+                          }).format(item.price || item.harga)}
+                        </span>
+                        <button className="text-green-600 hover:text-green-800 transition-colors">
+                          <Plus className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
             
             <RoleRestricted roles={['admin']}>
@@ -167,10 +277,16 @@ const TransactionPage = ({ userRole, userName, onLogout }) => {
                 </p>
                 <div className="flex space-x-3">
                   <button className="bg-yellow-500 text-white px-3 py-1 rounded text-sm hover:bg-yellow-600 transition-colors flex items-center">
-                    <FaEdit className="mr-1" /> Edit Menu
+                    <Edit className="mr-1 w-3 h-3" /> Edit Menu
+                  </button>
+                  <button 
+                    onClick={refreshTransactions}
+                    className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600 transition-colors flex items-center"
+                  >
+                    <Search className="mr-1 w-3 h-3" /> Lihat Transaksi
                   </button>
                   <button className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 transition-colors flex items-center">
-                    <FaTrash className="mr-1" /> Hapus Transaksi
+                    <Trash2 className="mr-1 w-3 h-3" /> Hapus Transaksi
                   </button>
                 </div>
               </div>
@@ -210,13 +326,13 @@ const TransactionPage = ({ userRole, userName, onLogout }) => {
                   {selectedItems.map(item => (
                     <div key={item.id} className="flex justify-between items-center border-b border-gray-100 pb-2">
                       <div>
-                        <p className="font-medium text-gray-800">{item.name}</p>
+                        <p className="font-medium text-gray-800">{item.name || item.nama}</p>
                         <p className="text-sm text-gray-500">
                           {new Intl.NumberFormat('id-ID', {
                             style: 'currency',
                             currency: 'IDR',
                             minimumFractionDigits: 0
-                          }).format(item.price)} x {item.quantity}
+                          }).format(item.price || item.harga)} x {item.quantity}
                         </p>
                       </div>
                       <div className="flex items-center space-x-2">
@@ -225,21 +341,21 @@ const TransactionPage = ({ userRole, userName, onLogout }) => {
                             onClick={() => updateQuantity(item.id, -1)}
                             className="text-red-500 hover:text-red-700 transition-colors"
                           >
-                            <FaMinusCircle />
+                            <MinusCircle className="w-4 h-4" />
                           </button>
                           <span className="font-medium">{item.quantity}</span>
                           <button
                             onClick={() => updateQuantity(item.id, 1)}
                             className="text-green-500 hover:text-green-700 transition-colors"
                           >
-                            <FaPlusCircle />
+                            <PlusCircle className="w-4 h-4" />
                           </button>
                         </div>
                         <button
                           onClick={() => removeItem(item.id)}
                           className="text-red-500 hover:text-red-700 transition-colors"
                         >
-                          <FaTrash />
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
