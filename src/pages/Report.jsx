@@ -40,14 +40,13 @@ const ProgressBar = ({ value, max, label, color = "bg-green-500" }) => {
   );
 };
 
-const Reports = () => {
+const Reports = ({userName, userRole}) => {
   const [period, setPeriod] = useState('Mei');
   const [selectedView, setSelectedView] = useState('overview');
   const [isLoading, setIsLoading] = useState(true);
   const [compareMode, setCompareMode] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [userRole, setUserRole] = useState('admin');
-  const [userName, setUserName] = useState('Admin'); // Replace with dynamic userName here
+  
   
   const currentMonthData = mockMonthlyData[mockMonthlyData.length - 1];
   const prevMonthData = mockMonthlyData[mockMonthlyData.length - 2];
@@ -278,10 +277,12 @@ const Reports = () => {
   };
   
   return (
-    <div className="flex">
+    <>
+    { userRole === 'admin' && (
+<div className="flex">
       <Sidebar
         userRole={userRole}
-        userName={userName} // Pass dynamic username here
+        userName={userName} 
         onLogout={() => console.log('Logged out')}
         activeTab="reports"
         setActiveTab={() => {}}
@@ -352,6 +353,9 @@ const Reports = () => {
         </div>
       </div>
     </div>
+    )}
+    </>
+    
   );
 };
 

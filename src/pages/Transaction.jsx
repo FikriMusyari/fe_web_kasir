@@ -24,7 +24,7 @@ const TransactionPage = ({ userRole, userName, onLogout }) => {
   const fetchProduct = async () => {
   try {
     const response = await getProducts();
-    setMenu(response.data);
+    setMenuItems(response.data);
   } catch (error) {
     console.error('Gagal mengambil data produk:', error);
   } finally {
@@ -37,36 +37,22 @@ useEffect(() => {
 }, []);
 
   useEffect(() => {
-    const delayedSearch = setTimeout(async () => {
-      if (searchTerm.trim()) {
-        try {
-          setSearchLoading(true);
-          const searchResults = await searchProduct(searchTerm);
-          if (searchResults) {
-            setMenuItems(searchResults);
-          }
-        } catch (err) {
-          console.error('Error searching products:', err);
-        } finally {
-          setSearchLoading(false);
-        }
+    const delayDebounce = setTimeout(async () => {
+      if (searchTerm.trim() === '') {
+        fetchProduct();
       } else {
-        try {
-          setSearchLoading(true);
-          const allProducts = await searchProduct('');
-          if (allProducts) {
-            setMenuItems(allProducts);
-          }
-        } catch (err) {
-          console.error('Error fetching all products:', err);
-        } finally {
-          setSearchLoading(false);
+        const result = await searchProduct(searchTerm);
+        if (result) {
+          setMenu(result.data);
+        } else {
+          setMenu([]);
         }
       }
-    }, 300); // 300ms debounce
+    }, 500);
 
-    return () => clearTimeout(delayedSearch);
+    return () => clearTimeout(delayDebounce);
   }, [searchTerm]);
+
 
   const addToCart = (item) => {
     const existingItemIndex = selectedItems.findIndex(i => i.id === item.id);
@@ -249,15 +235,11 @@ useEffect(() => {
                       className="border border-gray-200 rounded-md p-3 hover:bg-gray-50 transition-colors cursor-pointer"
                       onClick={() => addToCart(item)}
                     >
-                      <h3 className="font-medium text-gray-800">{item.name || item.nama}</h3>
-                      <p className="text-sm text-gray-500">{item.category || item.kategori}</p>
+                      <h3 className="font-medium text-gray-800">{item.nama}</h3>
+                      <p className="text-sm text-gray-500">{item.kategori}</p>
                       <div className="flex justify-between items-center mt-2">
                         <span className="font-semibold text-indigo-600">
-                          {new Intl.NumberFormat('id-ID', {
-                            style: 'currency',
-                            currency: 'IDR',
-                            minimumFractionDigits: 0
-                          }).format(item.price || item.harga)}
+                          {item.harga_jual}
                         </span>
                         <button className="text-green-600 hover:text-green-800 transition-colors">
                           <Plus className="w-4 h-4" />
@@ -326,13 +308,9 @@ useEffect(() => {
                   {selectedItems.map(item => (
                     <div key={item.id} className="flex justify-between items-center border-b border-gray-100 pb-2">
                       <div>
-                        <p className="font-medium text-gray-800">{item.name || item.nama}</p>
+                        <p className="font-medium text-gray-800">{item.nama}</p>
                         <p className="text-sm text-gray-500">
-                          {new Intl.NumberFormat('id-ID', {
-                            style: 'currency',
-                            currency: 'IDR',
-                            minimumFractionDigits: 0
-                          }).format(item.price || item.harga)} x {item.quantity}
+                          {item.harga_jual}
                         </p>
                       </div>
                       <div className="flex items-center space-x-2">

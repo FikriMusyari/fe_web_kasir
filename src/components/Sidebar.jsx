@@ -16,7 +16,7 @@ import {
 const Sidebar = ({ userRole, userName, onLogout, activeTab, setActiveTab, isCollapsed, toggleSidebar }) => {
   const location = useLocation();
   const navigate = useNavigate();
-
+  
   const menuItems = [
     {
       id: 'dashboard',
