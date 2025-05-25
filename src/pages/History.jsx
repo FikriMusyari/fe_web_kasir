@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { History, Search, Calendar, ChevronDown, Download, Filter, ArrowUpDown, CheckCircle, Clock, CreditCard, AlertCircle, ShoppingBag } from 'lucide-react';
+import { History, Search, Calendar, ChevronDown, ArrowUpDown, ShoppingBag } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 
 const mockTransactions = [
   { 
     id: 'TRX-001',
     date: '2025-05-01T14:30:00', 
-    customer: 'PIKRI',
     items: [
       { name: 'Nasi Goreng', quantity: 2, price: 15000 },
       { name: 'Es Teh', quantity: 3, price: 5000 }
@@ -14,67 +13,24 @@ const mockTransactions = [
     itemCount: 5,
     total: 124500,
     cashier: 'Budi Kasir',
-    paymentMethod: 'Credit Card',
-    status: 'completed'
+    paymentMethod: 'Credit Card'
   },
 ];
-
-const StatusBadge = ({ status }) => {
-  const statusStyles = {
-    completed: {
-      bgColor: 'bg-green-100',
-      textColor: 'text-green-800',
-      icon: <CheckCircle size={14} className="mr-1 text-green-600" />
-    },
-    pending: {
-      bgColor: 'bg-yellow-100',
-      textColor: 'text-yellow-800',
-      icon: <Clock size={14} className="mr-1 text-yellow-600" />
-    },
-    processing: {
-      bgColor: 'bg-blue-100',
-      textColor: 'text-blue-800',
-      icon: <CreditCard size={14} className="mr-1 text-blue-600" />
-    },
-    cancelled: {
-      bgColor: 'bg-red-100',
-      textColor: 'text-red-800',
-      icon: <AlertCircle size={14} className="mr-1 text-red-600" />
-    }
-  };
-  
-  const style = statusStyles[status] || statusStyles.pending;
-  
-  return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${style.bgColor} ${style.textColor}`}>
-      {style.icon}
-      {status.charAt(0).toUpperCase() + status.slice(1)}
-    </span>
-  );
-};
-
 const TransactionHistory = ({ userRole = 'admin', userName = 'Administrator' }) => {
   const [transactions, setTransactions] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [dateFilter, setDateFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [paymentFilter, setPaymentFilter] = useState('all');
   const [sortField, setSortField] = useState('date');
   const [sortDirection, setSortDirection] = useState('desc');
   const [loading, setLoading] = useState(true);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState('history');
   
-  const paymentMethods = ['all', 'Credit Card', 'Cash', 'Bank Transfer', 'Digital Wallet', 'QRIS'];
-  const statusOptions = ['all', 'completed', 'pending', 'processing', 'cancelled'];
-  
   const [stats, setStats] = useState({
     totalTransactions: 0,
     totalRevenue: 0,
-    averageValue: 0,
-    completedRate: 0
+    averageValue: 0
   });
 
   useEffect(() => {
@@ -89,33 +45,14 @@ const TransactionHistory = ({ userRole = 'admin', userName = 'Administrator' }) 
   }, []);
 
   useEffect(() => {
-    const completed = transactions.filter(tx => tx.status === 'completed').length;
     const total = transactions.reduce((sum, tx) => sum + tx.total, 0);
     
     setStats({
       totalTransactions: transactions.length,
       totalRevenue: total,
-      averageValue: total / (transactions.length || 1),
-      completedRate: (completed / transactions.length) * 100 || 0
+      averageValue: total / (transactions.length || 1)
     });
   }, [transactions]);
-
-  const handleDateChange = (field, value) => {
-    setDateRange({
-      ...dateRange,
-      [field]: value
-    });
-  };
-
-  const handleStatusChange = (status) => {
-    setStatusFilter(status);
-    setIsFilterOpen(false);
-  };
-  
-  const handlePaymentChange = (payment) => {
-    setPaymentFilter(payment);
-    setIsFilterOpen(false);
-  };
   
   const handleSort = (field) => {
     if (sortField === field) {
@@ -149,10 +86,6 @@ const TransactionHistory = ({ userRole = 'admin', userName = 'Administrator' }) 
     console.log(`View details for transaction ${transactionId}`);
   };
 
-  const handleExport = () => {
-    console.log('Exporting transaction history data');
-  };
-
   const handleLogout = () => {
     console.log('Logging out...');
   };
@@ -164,7 +97,6 @@ const TransactionHistory = ({ userRole = 'admin', userName = 'Administrator' }) 
   const filteredTransactions = transactions.filter(transaction => {
     const matchesSearch = 
       transaction.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      transaction.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
       transaction.cashier?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       transaction.paymentMethod?.toLowerCase().includes(searchTerm.toLowerCase());
     
@@ -193,10 +125,7 @@ const TransactionHistory = ({ userRole = 'admin', userName = 'Administrator' }) 
     const matchesStartDate = !dateRange.start || txDate >= new Date(dateRange.start);
     const matchesEndDate = !dateRange.end || txDate <= new Date(dateRange.end);
     
-    const matchesStatus = statusFilter === 'all' || transaction.status === statusFilter;
-    const matchesPayment = paymentFilter === 'all' || transaction.paymentMethod === paymentFilter;
-    
-    return matchesSearch && matchesDate && matchesStartDate && matchesEndDate && matchesStatus && matchesPayment;
+    return matchesSearch && matchesDate && matchesStartDate && matchesEndDate;
   }).sort((a, b) => {
     let comparison = 0;
     
@@ -204,8 +133,6 @@ const TransactionHistory = ({ userRole = 'admin', userName = 'Administrator' }) 
       const dateA = new Date(a.date);
       const dateB = new Date(b.date);
       comparison = dateA - dateB;
-    } else if (sortField === 'customer') {
-      comparison = a.customer.localeCompare(b.customer);
     } else if (sortField === 'total') {
       comparison = a.total - b.total;
     } else if (sortField === 'items') {
@@ -242,7 +169,7 @@ const TransactionHistory = ({ userRole = 'admin', userName = 'Administrator' }) 
         </header>
         
         <main className="flex-1 overflow-auto bg-gray-50 p-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
             <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 p-4 rounded-lg shadow-sm">
               <p className="text-xs font-medium text-indigo-600 uppercase mb-1">Total Transaksi</p>
               <h3 className="text-2xl font-bold text-gray-800">{stats.totalTransactions}</h3>
@@ -257,11 +184,6 @@ const TransactionHistory = ({ userRole = 'admin', userName = 'Administrator' }) 
               <p className="text-xs font-medium text-amber-600 uppercase mb-1">Rata-rata Transaksi</p>
               <h3 className="text-2xl font-bold text-gray-800">{formatCurrency(stats.averageValue)}</h3>
             </div>
-            
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg shadow-sm">
-              <p className="text-xs font-medium text-blue-600 uppercase mb-1">Tingkat Penyelesaian</p>
-              <h3 className="text-2xl font-bold text-gray-800">{stats.completedRate.toFixed(1)}%</h3>
-            </div>
           </div>
 
           <div className="mb-6">
@@ -272,7 +194,7 @@ const TransactionHistory = ({ userRole = 'admin', userName = 'Administrator' }) 
                 </div>
                 <input
                   type="text"
-                  placeholder="Cari ID transaksi, pelanggan, kasir..."
+                  placeholder="Cari ID transaksi, kasir..."
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -300,78 +222,7 @@ const TransactionHistory = ({ userRole = 'admin', userName = 'Administrator' }) 
                     </div>
                   </div>
                 </div>
-                
-                {dateFilter === 'all' && (
-                  <div className="flex space-x-2">
-                    <div className="w-32 md:w-40">
-                      <input
-                        type="date"
-                        className="block w-full pl-3 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                        value={dateRange.start}
-                        onChange={(e) => handleDateChange('start', e.target.value)}
-                        placeholder="Start"
-                      />
-                    </div>
-                  </div>
-                )}
               </div>
-              
-              <div className="relative">
-                <button 
-                  onClick={() => setIsFilterOpen(!isFilterOpen)}
-                  className="flex items-center justify-between px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 transition-all duration-300"
-                >
-                  <div className="flex items-center">
-                    <Filter size={18} className="mr-2 text-indigo-500" />
-                    <span>Filter</span>
-                  </div>
-                  <ChevronDown size={18} className={`transition-transform duration-300 ${isFilterOpen ? 'transform rotate-180' : ''}`} />
-                </button>
-                
-                {isFilterOpen && (
-                  <div className="absolute z-10 mt-2 w-56 right-0 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-2">
-                    <div className="mb-4">
-                      <h3 className="text-sm font-medium text-gray-700 mb-2">Status</h3>
-                      <div className="space-y-2">
-                        {statusOptions.map(status => (
-                          <button
-                            key={status}
-                            onClick={() => handleStatusChange(status)}
-                            className={`block w-full text-left px-3 py-2 rounded-md ${statusFilter === status ? 'bg-indigo-100 text-indigo-700' : 'hover:bg-gray-100'}`}
-                          >
-                            {status === 'all' ? 'Semua Status' : status.charAt(0).toUpperCase() + status.slice(1)}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-700 mb-2">Metode Pembayaran</h3>
-                      <div className="space-y-2">
-                        {paymentMethods.map(payment => (
-                          <button
-                            key={payment}
-                            onClick={() => handlePaymentChange(payment)}
-                            className={`block w-full text-left px-3 py-2 rounded-md ${paymentFilter === payment ? 'bg-indigo-100 text-indigo-700' : 'hover:bg-gray-100'}`}
-                          >
-                            {payment === 'all' ? 'Semua Metode' : payment}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-              
-              {userRole === 'admin' && (
-                <button
-                  onClick={handleExport}
-                  className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  <Download className="h-5 w-5 mr-2" />
-                  Export Data
-                </button>
-              )}
             </div>
           </div>
           
@@ -393,8 +244,6 @@ const TransactionHistory = ({ userRole = 'admin', userName = 'Administrator' }) 
                     setSearchTerm('');
                     setDateRange({ start: '', end: '' });
                     setDateFilter('all');
-                    setStatusFilter('all');
-                    setPaymentFilter('all');
                   }}
                   className="mt-4 text-indigo-600 hover:text-indigo-800 font-medium"
                 >
@@ -430,18 +279,6 @@ const TransactionHistory = ({ userRole = 'admin', userName = 'Administrator' }) 
                         <th 
                           scope="col" 
                           className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                          onClick={() => handleSort('customer')}
-                        >
-                          <div className="flex items-center">
-                            <span>Pelanggan</span>
-                            {sortField === 'customer' && (
-                              <ArrowUpDown size={16} className={`ml-1 ${sortDirection === 'asc' ? 'transform rotate-180' : ''}`} />
-                            )}
-                          </div>
-                        </th>
-                        <th 
-                          scope="col" 
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                           onClick={() => handleSort('items')}
                         >
                           <div className="flex items-center">
@@ -469,9 +306,6 @@ const TransactionHistory = ({ userRole = 'admin', userName = 'Administrator' }) 
                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Pembayaran
                         </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Status
-                        </th>
                         <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Aksi
                         </th>
@@ -487,9 +321,6 @@ const TransactionHistory = ({ userRole = 'admin', userName = 'Administrator' }) 
                             {transaction.id}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {transaction.customer}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             {transaction.itemCount || transaction.items.length}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -500,9 +331,6 @@ const TransactionHistory = ({ userRole = 'admin', userName = 'Administrator' }) 
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {transaction.paymentMethod}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <StatusBadge status={transaction.status} />
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <button

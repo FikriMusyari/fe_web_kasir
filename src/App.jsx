@@ -8,6 +8,7 @@ import HistoryPage from './pages/History';
 import Menu from './pages/Menu';
 import ReportPage from './pages/Report';
 import AddAccountPage from './pages/AddAccount';
+import Unauthorized from './pages/Unauthorized'; 
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -114,6 +115,7 @@ function App() {
       />
 
       <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="/unauthorized" element={<Unauthorized />} />
     </Routes>
   );
 }
