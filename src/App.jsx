@@ -8,12 +8,13 @@ import HistoryPage from './pages/History';
 import Menu from './pages/Menu';
 import ReportPage from './pages/Report';
 import AddAccountPage from './pages/AddAccount';
-import Unauthorized from './pages/Unauthorized'; 
+import Unauthorized from './pages/Unauthorized';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [userName, setUserName] = useState('');
+  const [isLoading, setIsLoading] = useState(true); // NEW
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -25,17 +26,18 @@ function App() {
       setUserRole(role);
       setUserName(name || '');
     }
+    setIsLoading(false); // FINISH LOADING
   }, []);
 
   const ambiltoken = () => {
     const token = localStorage.getItem('token');
-    const userRole = localStorage.getItem('userRole');
-    const userName = localStorage.getItem('userName');
+    const role = localStorage.getItem('userRole');
+    const name = localStorage.getItem('userName');
 
-    if (!token || !userRole) return null;
+    if (!token || !role) return null;
     setIsAuthenticated(true);
-    setUserRole(userRole);
-    setUserName(userName || '');
+    setUserRole(role);
+    setUserName(name || '');
   };
 
   const handleLogout = () => {
@@ -46,6 +48,11 @@ function App() {
     setUserRole(null);
     setUserName('');
   };
+
+  // Show loading spinner or splash screen while checking auth
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen text-xl">Loading...</div>;
+  }
 
   return (
     <Routes>
@@ -114,8 +121,8 @@ function App() {
         }
       />
 
-      <Route path="*" element={<Navigate to="/" replace />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
