@@ -7,14 +7,14 @@ import TransactionPage from './pages/Transaction';
 import HistoryPage from './pages/History';
 import Menu from './pages/Menu';
 import ReportPage from './pages/Report';
-import AddAccountPage from './pages/AddAccount';
+import AddAccountPage from './pages/Settings';
 import Unauthorized from './pages/Unauthorized';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [userName, setUserName] = useState('');
-  const [isLoading, setIsLoading] = useState(true); // NEW
+  const [isLoading, setIsLoading] = useState(true); 
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -26,7 +26,7 @@ function App() {
       setUserRole(role);
       setUserName(name || '');
     }
-    setIsLoading(false); // FINISH LOADING
+    setIsLoading(false); 
   }, []);
 
   const ambiltoken = () => {
@@ -49,7 +49,6 @@ function App() {
     setUserName('');
   };
 
-  // Show loading spinner or splash screen while checking auth
   if (isLoading) {
     return <div className="flex justify-center items-center h-screen text-xl">Loading...</div>;
   }
@@ -113,9 +112,9 @@ function App() {
       />
 
       <Route
-        path="/add-account"
+        path="/settings"
         element={
-          <ProtectedRoute isAuthenticated={isAuthenticated} allowedRoles={['admin']}>
+          <ProtectedRoute isAuthenticated={isAuthenticated} allowedRoles={['admin', 'kasir']}>
             <AddAccountPage userRole={userRole} userName={userName} onLogout={handleLogout} />
           </ProtectedRoute>
         }

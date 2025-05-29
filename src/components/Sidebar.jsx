@@ -53,11 +53,11 @@ const Sidebar = ({ userRole, userName, onLogout, activeTab, setActiveTab, isColl
       roles: ['admin']
     },
     {
-      id: 'add-account',
-      label: 'Tambah Akun',
-      path: '/add-account',
+      id: 'settings',
+      label: 'Pengaturan',
+      path: '/settings',
       icon: <UserPlus size={20} />,
-      roles: ['admin']
+      roles: ['admin', 'kasir']
     }
   ];
 

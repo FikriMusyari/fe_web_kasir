@@ -71,7 +71,6 @@ const Dashboard = ({ userRole, userName, onLogout }) => {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Sidebar with toggle functionality */}
       <div className={`relative ${sidebarCollapsed ? 'w-20' : 'w-14'} transition-all duration-300 ease-in-out`}>
         <Sidebar 
           userRole={userRole} 

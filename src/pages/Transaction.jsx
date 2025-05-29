@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar'; 
-import RoleRestricted from '../components/RoleRestricted';
 import { Plus, Search, Edit, Trash2, PlusCircle, MinusCircle } from 'lucide-react';
 import { searchProduct, getProducts, getTransactions } from '../data/Api.js'; 
 
@@ -248,29 +247,6 @@ useEffect(() => {
                 </div>
               )}
             </div>
-            
-            <RoleRestricted roles={['admin']}>
-              <div className="bg-yellow-50 rounded-lg shadow p-4 border-l-4 border-yellow-500">
-                <h2 className="font-semibold text-yellow-800 mb-2">Opsi Admin</h2>
-                <p className="text-sm text-yellow-700 mb-3">
-                  Fitur tambahan khusus untuk administrator:
-                </p>
-                <div className="flex space-x-3">
-                  <button className="bg-yellow-500 text-white px-3 py-1 rounded text-sm hover:bg-yellow-600 transition-colors flex items-center">
-                    <Edit className="mr-1 w-3 h-3" /> Edit Menu
-                  </button>
-                  <button 
-                    onClick={refreshTransactions}
-                    className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600 transition-colors flex items-center"
-                  >
-                    <Search className="mr-1 w-3 h-3" /> Lihat Transaksi
-                  </button>
-                  <button className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 transition-colors flex items-center">
-                    <Trash2 className="mr-1 w-3 h-3" /> Hapus Transaksi
-                  </button>
-                </div>
-              </div>
-            </RoleRestricted>
           </div>
           
           <div className="lg:col-span-1">
