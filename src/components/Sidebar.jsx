@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Home,
   ShoppingCart,
@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 
 const Sidebar = ({ userRole, userName, onLogout, activeTab, setActiveTab, isCollapsed, toggleSidebar }) => {
-  const location = useLocation();
   const navigate = useNavigate();
   
   const menuItems = [
@@ -54,11 +53,11 @@ const Sidebar = ({ userRole, userName, onLogout, activeTab, setActiveTab, isColl
       roles: ['admin']
     },
     {
-      id: 'add-account',
-      label: 'Tambah Akun',
-      path: '/add-account',
+      id: 'settings',
+      label: 'Pengaturan',
+      path: '/settings',
       icon: <UserPlus size={20} />,
-      roles: ['admin']
+      roles: ['admin', 'kasir']
     }
   ];
 

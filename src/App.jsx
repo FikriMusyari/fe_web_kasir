@@ -7,12 +7,14 @@ import TransactionPage from './pages/Transaction';
 import HistoryPage from './pages/History';
 import Menu from './pages/Menu';
 import ReportPage from './pages/Report';
-import AddAccountPage from './pages/AddAccount';
+import AddAccountPage from './pages/Settings';
+import Unauthorized from './pages/Unauthorized';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [userName, setUserName] = useState('');
+  const [isLoading, setIsLoading] = useState(true); 
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -24,17 +26,18 @@ function App() {
       setUserRole(role);
       setUserName(name || '');
     }
+    setIsLoading(false); 
   }, []);
 
   const ambiltoken = () => {
     const token = localStorage.getItem('token');
-    const userRole = localStorage.getItem('userRole');
-    const userName = localStorage.getItem('userName');
+    const role = localStorage.getItem('userRole');
+    const name = localStorage.getItem('userName');
 
-    if (!token || !userRole) return null;
+    if (!token || !role) return null;
     setIsAuthenticated(true);
-    setUserRole(userRole);
-    setUserName(userName || '');
+    setUserRole(role);
+    setUserName(name || '');
   };
 
   const handleLogout = () => {
@@ -45,6 +48,10 @@ function App() {
     setUserRole(null);
     setUserName('');
   };
+
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen text-xl">Loading...</div>;
+  }
 
   return (
     <Routes>
@@ -105,14 +112,15 @@ function App() {
       />
 
       <Route
-        path="/add-account"
+        path="/settings"
         element={
-          <ProtectedRoute isAuthenticated={isAuthenticated} allowedRoles={['admin']}>
+          <ProtectedRoute isAuthenticated={isAuthenticated} allowedRoles={['admin', 'kasir']}>
             <AddAccountPage userRole={userRole} userName={userName} onLogout={handleLogout} />
           </ProtectedRoute>
         }
       />
 
+      <Route path="/unauthorized" element={<Unauthorized />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

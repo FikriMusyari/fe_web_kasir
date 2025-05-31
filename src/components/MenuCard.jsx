@@ -17,7 +17,7 @@ const MenuCard = ({ item, userRole, onRefresh }) => {
 
     if (deleted) {
       toast.success('Produk berhasil dihapus');
-      onRefresh(); // refresh daftar produk setelah hapus
+      onRefresh(); 
     } else {
       toast.error('Gagal menghapus produk');
     }

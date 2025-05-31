@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar'; 
-import RoleRestricted from '../components/RoleRestricted';
 import { Plus, Search, Edit, Trash2, PlusCircle, MinusCircle } from 'lucide-react';
 import { searchProduct, getProducts, getTransactions } from '../data/Api.js'; 
 
@@ -15,8 +14,8 @@ const TransactionPage = ({ userRole, userName, onLogout }) => {
   const [cashPaid, setCashPaid] = useState('');
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [searchLoading, setSearchLoading] = useState(false);
+  const [error] = useState(null);
+  const [searchLoading] = useState(false);
   
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState('transaksi'); 
@@ -125,7 +124,6 @@ useEffect(() => {
     };
     
     try {
-      // Send transaction to API
       const response = await fetch('https://api-kantin-hono.up.railway.app/api/transactions', {
         method: 'POST',
         headers: {
@@ -143,7 +141,6 @@ useEffect(() => {
       console.log('Transaction saved:', result);
       alert('Transaksi berhasil disimpan!');
       
-      // Reset form
       setSelectedItems([]);
       setCustomerName('');
       setPaymentMethod('Cash');
@@ -250,29 +247,6 @@ useEffect(() => {
                 </div>
               )}
             </div>
-            
-            <RoleRestricted roles={['admin']}>
-              <div className="bg-yellow-50 rounded-lg shadow p-4 border-l-4 border-yellow-500">
-                <h2 className="font-semibold text-yellow-800 mb-2">Opsi Admin</h2>
-                <p className="text-sm text-yellow-700 mb-3">
-                  Fitur tambahan khusus untuk administrator:
-                </p>
-                <div className="flex space-x-3">
-                  <button className="bg-yellow-500 text-white px-3 py-1 rounded text-sm hover:bg-yellow-600 transition-colors flex items-center">
-                    <Edit className="mr-1 w-3 h-3" /> Edit Menu
-                  </button>
-                  <button 
-                    onClick={refreshTransactions}
-                    className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600 transition-colors flex items-center"
-                  >
-                    <Search className="mr-1 w-3 h-3" /> Lihat Transaksi
-                  </button>
-                  <button className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 transition-colors flex items-center">
-                    <Trash2 className="mr-1 w-3 h-3" /> Hapus Transaksi
-                  </button>
-                </div>
-              </div>
-            </RoleRestricted>
           </div>
           
           <div className="lg:col-span-1">
@@ -341,21 +315,8 @@ useEffect(() => {
                 </div>
               )}
               
-              <div className="border-t border-gray-200 pt-4 mt-4">
-                <div className="flex justify-between mb-2">
-                  <span className="text-gray-600">Subtotal</span>
-                  <span className="font-medium">
-                    {new Intl.NumberFormat('id-ID', {
-                      style: 'currency',
-                      currency: 'IDR',
-                      minimumFractionDigits: 0
-                    }).format(total)}
-                  </span>
-                </div>
-                <div className="flex justify-between mb-4">
-                  <span className="text-gray-600">Pajak (0%)</span>
-                  <span className="font-medium">Rp0</span>
-                </div>
+              <div className="border-t border-gray-200 pt-4 mt-4">                  
+                <div className="flex justify-between mb-4"></div>
                 <div className="flex justify-between text-lg font-bold">
                   <span>Total</span>
                   <span className="text-indigo-700">
@@ -379,9 +340,7 @@ useEffect(() => {
                     className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   >
                     <option value="Cash">Tunai</option>
-                    <option value="Credit Card">Kartu Debit/Kredit</option>
                     <option value="Bank Transfer">Transfer Bank</option>
-                    <option value="Digital Wallet">E-Wallet</option>
                   </select>
                 </div>
                 
