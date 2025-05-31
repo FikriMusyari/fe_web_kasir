@@ -78,7 +78,7 @@ useEffect(() => {
   };
 
   const updateQuantity = (itemId, amount) => {
-    const updatedItems = selectedItems.map(item => {
+    const updatedItems = selectedItems.marolerolerestp(item => {
       if (item.id === itemId) {
         const newQuantity = item.quantity + amount;
         if (newQuantity < 1) return null;
