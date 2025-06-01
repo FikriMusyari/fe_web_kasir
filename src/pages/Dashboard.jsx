@@ -10,7 +10,7 @@ const Dashboard = ({ userRole, userName, onLogout }) => {
   const [activeTab, setActiveTab] = useState(location.pathname.split('/')[1] || 'dashboard');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  const adminCards = [
+  const ownerCards = [
     {
       icon: <ShoppingCart className="text-white" size={24} />,
       title: "Transaksi",
@@ -41,7 +41,7 @@ const Dashboard = ({ userRole, userName, onLogout }) => {
     }
   ];
 
-  const cashierCards = adminCards.filter(card => 
+  const cashierCards = ownerCards.filter(card => 
     ['Transaksi', 'Riwayat'].includes(card.title)
   );
 
@@ -113,7 +113,7 @@ const Dashboard = ({ userRole, userName, onLogout }) => {
                 <div>
                   <h2 className="text-2xl font-bold mb-2">Sistem Manajemen Warung Cerdas</h2>
                   <p className="max-w-2xl">
-                    {userRole === 'admin' 
+                    {userRole === 'owner' 
                       ? 'Kelola seluruh operasional warung Anda dengan mudah dan efisien.'
                       : 'Proses transaksi dengan cepat dan akurat.'}
                   </p>
@@ -174,7 +174,7 @@ const Dashboard = ({ userRole, userName, onLogout }) => {
 
             <h3 className="text-xl font-semibold text-gray-800 mb-4">Aksi Cepat</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {(userRole === 'admin' ? adminCards : cashierCards).map((card, index) => (
+              {(userRole === 'owner' ? ownerCards : cashierCards).map((card, index) => (
                 <div 
                   key={index}
                   onClick={() => {

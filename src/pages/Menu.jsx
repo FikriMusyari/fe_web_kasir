@@ -79,7 +79,7 @@ useEffect(() => {
       <main className="flex-1 p-6 ml-64">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-gray-800">Menu Management</h1>
-          {userRole === 'admin' && (
+          {userRole === 'owner' && (
           <button onClick={() => setIsAddModalOpen(true)} className="p-3 border-white rounded-2xl btn-primary flex items-center bg-[#7AE2CF] ">
     <PlusCircle className="mr-2" size={18} />
     Add Item

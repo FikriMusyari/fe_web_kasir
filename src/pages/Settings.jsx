@@ -8,7 +8,7 @@ const apiService = {
   getUsers: () => Promise.resolve({
     success: true,
     data: [
-      { id: 1, username: 'admin1', role: 'admin', createdAt: '2024-01-15' },
+      { id: 1, username: 'owner1', role: 'owner', createdAt: '2024-01-15' },
       { id: 2, username: 'kasir1', role: 'kasir', createdAt: '2024-01-20' },
       { id: 3, username: 'kasir2', role: 'kasir', createdAt: '2024-02-01' }
     ]
@@ -314,7 +314,7 @@ const SettingsPage = ({ userRole, userName, onLogout }) => {
 
   // Load users when switching to users tab
   React.useEffect(() => {
-    if (activeTab === 'users' && userRole === 'admin') {
+    if (activeTab === 'users' && userRole === 'owner') {
       handleLoadUsers();
     }
   }, [activeTab, userRole]);
@@ -417,7 +417,7 @@ const SettingsPage = ({ userRole, userName, onLogout }) => {
             onChange={(e) => addUserForm.setValue('role', e.target.value)}
           >
             <option value="kasir">Kasir</option>
-            <option value="admin">Admin</option>
+            <option value="owner">Owner</option>
           </select>
         </div>
       </div>
@@ -505,11 +505,11 @@ const SettingsPage = ({ userRole, userName, onLogout }) => {
                           onChange={(e) => editUserForm.setValue('role', e.target.value)}
                         >
                           <option value="kasir">Kasir</option>
-                          <option value="admin">Admin</option>
+                          <option value="owner">Owner</option>
                         </select>
                       ) : (
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          user.role === 'admin' 
+                          user.role === 'owner' 
                             ? 'bg-purple-100 text-purple-800' 
                             : 'bg-blue-100 text-blue-800'
                         }`}>
@@ -612,7 +612,7 @@ const SettingsPage = ({ userRole, userName, onLogout }) => {
                   >
                     Profil Saya
                   </TabButton>
-                  {userRole === 'admin' && (
+                  {userRole === 'owner' && (
                     <TabButton
                       active={activeTab === 'users'}
                       onClick={() => setActiveTab('users')}
@@ -627,7 +627,7 @@ const SettingsPage = ({ userRole, userName, onLogout }) => {
 
             {/* Tab Content */}
             {activeTab === 'profile' && renderProfileTab()}
-            {activeTab === 'users' && userRole === 'admin' && renderUsersTab()}
+            {activeTab === 'users' && userRole === 'owner' && renderUsersTab()}
           </div>
         </div>
       </div>

@@ -278,7 +278,7 @@ const Reports = ({userName, userRole}) => {
   
   return (
     <>
-    { userRole === 'admin' && (
+    { userRole === 'owner' && (
 <div className="flex">
       <Sidebar
         userRole={userRole}
