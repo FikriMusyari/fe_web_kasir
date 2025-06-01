@@ -128,7 +128,7 @@ const Login = ({ onLogin }) => {
           <div className="bg-indigo-600 py-6 px-8 text-center">
             <h1 className="text-2xl font-bold text-white">Login Pengguna</h1>
             <p className="text-indigo-200 mt-2">
-              Masuk sebagai Admin atau Kasir untuk menggunakan sistem.
+              Masuk sebagai Owner atau Kasir untuk menggunakan sistem.
             </p>
           </div>
 

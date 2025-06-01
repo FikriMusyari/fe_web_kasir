@@ -77,7 +77,7 @@ useEffect(() => {
   };
 
   const updateQuantity = (itemId, amount) => {
-    const updatedItems = selectedItems.map(item => {
+    const updatedItems = selectedItems.marolerolerestp(item => {
       if (item.id === itemId) {
         const newQuantity = item.quantity + amount;
         if (newQuantity < 1) return null;
@@ -157,12 +157,11 @@ useEffect(() => {
     return cashPaidNum - total;
   };
 
-  // Function to refresh transactions (can be called from admin section)
+  
   const refreshTransactions = async () => {
     try {
       const transactions = await getTransactions();
       console.log('Current transactions:', transactions);
-      // You can use this data to show recent transactions or for admin purposes
     } catch (err) {
       console.error('Error fetching transactions:', err);
     }

@@ -22,42 +22,42 @@ const Sidebar = ({ userRole, userName, onLogout, activeTab, setActiveTab, isColl
       label: 'Dashboard',
       path: '/dashboard',
       icon: <Home size={20} />,
-      roles: ['admin', 'kasir']
+      roles: ['owner', 'kasir']
     },
     {
       id: 'transactions',
       label: 'Transaksi',
       path: '/transactions',
       icon: <ShoppingCart size={20} />,
-      roles: ['admin', 'kasir']
+      roles: ['owner', 'kasir']
     },
     {
       id: 'history',
       label: 'Riwayat',
       path: '/history',
       icon: <History size={20} />,
-      roles: ['admin', 'kasir']
+      roles: ['owner', 'kasir']
     },
     {
       id: 'menu',
       label: 'Kelola Menu',
       path: '/menu',
       icon: <Utensils size={20} />,
-      roles: ['admin', 'kasir']
+      roles: ['owner', 'kasir']
     },
     {
       id: 'reports',
       label: 'Laporan',
       path: '/reports',
       icon: <BarChart size={20} />,
-      roles: ['admin']
+      roles: ['owner']
     },
     {
       id: 'settings',
       label: 'Pengaturan',
       path: '/settings',
       icon: <UserPlus size={20} />,
-      roles: ['admin', 'kasir']
+      roles: ['owner', 'kasir']
     }
   ];
 
@@ -90,7 +90,7 @@ const Sidebar = ({ userRole, userName, onLogout, activeTab, setActiveTab, isColl
           <>
             <h2 className="text-2xl font-bold mb-1 text-white">Warung Sekre</h2>
             <div className="text-indigo-200 mb-6 text-sm">
-              {userRole === 'admin' ? 'Administrator' : 'Kasir'} - {userName || 'User'}
+              {userRole === 'owner' ? 'Owner' : 'Kasir'} - {userName || 'User'}
             </div>
           </>
         ) : (
@@ -131,7 +131,7 @@ const Sidebar = ({ userRole, userName, onLogout, activeTab, setActiveTab, isColl
                 </div>
                 <div className="ml-3">
                   <p className="text-sm font-medium text-white">
-                    {userName || (userRole === 'admin' ? 'Admin' : 'Kasir')}
+                    {userName || (userRole === 'owner' ? 'Owner' : 'Kasir')}
                   </p>
                   <p className="text-xs text-indigo-300">Online</p>
                 </div>

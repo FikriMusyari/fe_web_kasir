@@ -88,7 +88,7 @@ const MenuCard = ({ item, userRole, onRefresh }) => {
       <div className="relative">
         <img src={item.image} className="w-full h-48 object-cover bg-cl" />
 
-        {isHovered && userRole === 'admin' && (
+        {isHovered && userRole === 'owner' && (
           <div className="absolute inset-0 bg-opacity-50 flex items-center justify-center">
             <div className="flex space-x-3">
               <button className="bg-white p-2 rounded-full hover:bg-gray-100" 
@@ -113,7 +113,7 @@ const MenuCard = ({ item, userRole, onRefresh }) => {
 
       <div className="p-4">
         <h3 className="font-bold text-lg text-gray-800 mb-2">{item.nama}</h3>
-       {userRole === 'admin' && (
+       {userRole === 'owner' && (
         <p className="text-gray-600 text-sm mb-3 line-clamp-2">Harga Beli: {item.harga_beli}</p>
 )}
         <div className="flex items-center text-xs">

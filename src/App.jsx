@@ -96,7 +96,7 @@ function App() {
       <Route
         path="/menu"
         element={
-          <ProtectedRoute isAuthenticated={isAuthenticated} allowedRoles={['admin', 'kasir']}>
+          <ProtectedRoute isAuthenticated={isAuthenticated} allowedRoles={['owner', 'kasir']}>
             <Menu userRole={userRole} userName={userName} onLogout={handleLogout} />
           </ProtectedRoute>
         }
@@ -105,7 +105,7 @@ function App() {
       <Route
         path="/reports"
         element={
-          <ProtectedRoute isAuthenticated={isAuthenticated} allowedRoles={['admin']}>
+          <ProtectedRoute isAuthenticated={isAuthenticated} allowedRoles={['owner']}>
             <ReportPage userRole={userRole} userName={userName} onLogout={handleLogout} />
           </ProtectedRoute>
         }
@@ -114,7 +114,7 @@ function App() {
       <Route
         path="/settings"
         element={
-          <ProtectedRoute isAuthenticated={isAuthenticated} allowedRoles={['admin', 'kasir']}>
+          <ProtectedRoute isAuthenticated={isAuthenticated} allowedRoles={['owner', 'kasir']}>
             <AddAccountPage userRole={userRole} userName={userName} onLogout={handleLogout} />
           </ProtectedRoute>
         }

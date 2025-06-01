@@ -16,7 +16,7 @@ const mockTransactions = [
     paymentMethod: 'Credit Card'
   },
 ];
-const TransactionHistory = ({ userRole = 'admin', userName = 'Administrator' }) => {
+const TransactionHistory = ({ userRole, userName, onLogout }) => {
   const [transactions, setTransactions] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [dateFilter, setDateFilter] = useState('all');
@@ -86,10 +86,6 @@ const TransactionHistory = ({ userRole = 'admin', userName = 'Administrator' }) 
     console.log(`View details for transaction ${transactionId}`);
   };
 
-  const handleLogout = () => {
-    console.log('Logging out...');
-  };
-
   const toggleSidebar = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
@@ -147,7 +143,7 @@ const TransactionHistory = ({ userRole = 'admin', userName = 'Administrator' }) 
       <Sidebar 
         userRole={userRole} 
         userName={userName} 
-        onLogout={handleLogout}
+        onLogout={onLogout}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         isCollapsed={isSidebarCollapsed}
