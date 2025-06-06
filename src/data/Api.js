@@ -2,17 +2,7 @@ import axios from 'axios';
 
 const BASE_URL = 'https://api-kantin-hono.up.railway.app/api';
 
-export const getUsers = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/users`);
-    return response.data;
-  } catch (error) {
-    console.error('Terjadi kesalahan saat mengambil data pengguna:', error);
-    return [];
-  }
-};
-
-export const getUserById = async (userId) => {
+const getUserById = async (userId) => {
   try {
     const response = await axios.get(`${BASE_URL}/users/${userId}`);
     return response.data;
@@ -22,7 +12,7 @@ export const getUserById = async (userId) => {
   }
 };
 
-export const getCurrentUser = async () => {
+const getCurrentUser = async () => {
   try {
     const token = localStorage.getItem("token");
 
@@ -39,7 +29,7 @@ export const getCurrentUser = async () => {
   }
 };
 
-export const loginUser = async (credentials) => {
+const loginUser = async (credentials) => {
   try {
     const response = await axios.post(`${BASE_URL}/users/login`, credentials);
     return response.data;
@@ -48,7 +38,8 @@ export const loginUser = async (credentials) => {
     return null;
   }
 };
-export const addUser = async (newUser) => {
+
+const addUser = async (newUser) => {
   try {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/users`, {
       method: 'POST',
@@ -69,7 +60,7 @@ export const addUser = async (newUser) => {
 };
 
 
-export const getProducts = async () => {
+const getProducts = async () => {
   try {
      const token = localStorage.getItem("token");
     const response = await axios.get(`${BASE_URL}/products`, {
@@ -85,7 +76,7 @@ export const getProducts = async () => {
   }
 };
 
-export const buatProducts = async (dataproduk) => {
+const buatProducts = async (dataproduk) => {
   const token = localStorage.getItem('token');
   try {
     const response = await axios.post(`${BASE_URL}/products`, dataproduk, {
@@ -100,7 +91,7 @@ export const buatProducts = async (dataproduk) => {
   }
 };
 
-export const updateProduct = async (productId, updatedData) => {
+const updateProduct = async (productId, updatedData) => {
   const token = localStorage.getItem('token');
   try {
     const response = await axios.patch(`${BASE_URL}/products/${productId}`, updatedData, {
@@ -117,7 +108,7 @@ export const updateProduct = async (productId, updatedData) => {
   }
 };
 
-export const searchProduct = async (query) => {
+const searchProduct = async (query) => {
   const token = localStorage.getItem('token');
   try {
     const response = await axios.get(`${BASE_URL}/products/search?`, {
@@ -136,7 +127,7 @@ export const searchProduct = async (query) => {
   }
 };
 
-export const deleteProduct = async (productId) => {
+const deleteProduct = async (productId) => {
   const token = localStorage.getItem('token');
   try {
     const response = await axios.delete(`${BASE_URL}/products/${productId}`, {
@@ -151,17 +142,96 @@ export const deleteProduct = async (productId) => {
   }
 };
 
-export const getTransactions = async () => {
+const buatTransaksi = async (dataTransaksi) => {
+  const token = localStorage.getItem('token');
   try {
-    const response = await axios.get(`${BASE_URL}/transactions`);
+    const response = await axios.post(`${BASE_URL}/transactions`, dataTransaksi, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      }
+    });
     return response.data;
   } catch (error) {
-    console.error('Terjadi kesalahan saat mengambil data transaksi:', error);
-    return [];
+    return null
   }
 };
 
-export const getReports = async () => {
+const getTransactions = async () => {
+  try {
+     const token = localStorage.getItem("token");
+    const response = await axios.get(`${BASE_URL}/transactions`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Terjadi kesalahan saat mengambil data produk:', error);
+    return null;
+  }
+};
+
+const searchTransactions = async (searchParams) => {
+  const token = localStorage.getItem('token');
+  try {
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Handle general search (quick search)
+    if (searchParams.general && searchParams.general.trim()) {
+      params.append('general', searchParams.general.trim());
+    } else {
+      // Handle specific field searches
+      if (searchParams.produk && searchParams.produk.trim()) {
+        params.append('produk', searchParams.produk.trim());
+      }
+
+      if (searchParams.user && searchParams.user.trim()) {
+        params.append('user', searchParams.user.trim());
+      }
+
+      if (searchParams.tanggal && searchParams.tanggal.trim()) {
+        params.append('tanggal', searchParams.tanggal.trim());
+      }
+    }
+
+    // If no search params, return all transactions
+    if (params.toString() === '') {
+      return await getTransactions();
+    }
+
+    const response = await axios.get(`${BASE_URL}/transactions/search?${params.toString()}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      }
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Gagal mencari transaksi:', error);
+    return null;
+  }
+};
+
+const deleteTransaction = async (transactionId) => {
+  const token = localStorage.getItem('token');
+  try {
+    const response = await axios.delete(`${BASE_URL}/transactions/${transactionId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Gagal menghapus transaksi dengan ID ${transactionId}:`, error);
+    return null;
+  }
+};
+
+const getReports = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/reports`);
     return response.data;
@@ -170,3 +240,5 @@ export const getReports = async () => {
     return [];
   }
 };
+
+export {getUserById, getCurrentUser, loginUser, addUser, getProducts, buatProducts, updateProduct, searchProduct, deleteProduct, buatTransaksi, getTransactions, searchTransactions, deleteTransaction, getReports};
