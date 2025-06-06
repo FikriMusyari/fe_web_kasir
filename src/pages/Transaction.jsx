@@ -1,24 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar'; 
-import { Plus, Search, Edit, Trash2, PlusCircle, MinusCircle } from 'lucide-react';
-import { searchProduct, getProducts, getTransactions } from '../data/Api.js'; 
+import { Plus, Search, Trash2, PlusCircle, MinusCircle } from 'lucide-react';
+import { searchProduct, getProducts, buatTransaksi } from '../data/Api.js';
 
 const TransactionPage = ({ userRole, userName, onLogout }) => {
-  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedItems, setSelectedItems] = useState([]);
-  const [customerName, setCustomerName] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('Cash');
   const [showCustomerInfo, setShowCustomerInfo] = useState(false);
   const [cashPaid, setCashPaid] = useState('');
+  const [customerName, setCustomerName] = useState('');
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error] = useState(null);
   const [searchLoading] = useState(false);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [activeTab, setActiveTab] = useState('transaksi'); 
+  const [activeTab, setActiveTab] = useState('transaksi');
+
+  
+  const parseHargaToNumber = (hargaString) => {
+    if (typeof hargaString === 'number') return hargaString;
+    if (typeof hargaString === 'string') {
+
+      const cleanedString = hargaString.replace(/[^\d.,]/g, '');
+      const numberString = cleanedString.replace(/\./g, '').replace(/,/g, '.');
+      return parseFloat(numberString) || 0;
+    }
+    return 0;
+  };
 
   const fetchProduct = async () => {
   try {
@@ -42,9 +57,9 @@ useEffect(() => {
       } else {
         const result = await searchProduct(searchTerm);
         if (result) {
-          setMenu(result.data);
+          setMenuItems(result.data);
         } else {
-          setMenu([]);
+          setMenuItems([]);
         }
       }
     }, 500);
@@ -55,13 +70,15 @@ useEffect(() => {
 
   const addToCart = (item) => {
     const existingItemIndex = selectedItems.findIndex(i => i.id === item.id);
-    
+    const hargaJual = parseHargaToNumber(item.harga_jual);
+
     if (existingItemIndex >= 0) {
       const updatedItems = [...selectedItems];
+      const newQuantity = updatedItems[existingItemIndex].quantity + 1;
       updatedItems[existingItemIndex] = {
         ...updatedItems[existingItemIndex],
-        quantity: updatedItems[existingItemIndex].quantity + 1,
-        subtotal: (updatedItems[existingItemIndex].quantity + 1) * item.price
+        quantity: newQuantity,
+        subtotal: newQuantity * hargaJual
       };
       setSelectedItems(updatedItems);
     } else {
@@ -70,27 +87,28 @@ useEffect(() => {
         {
           ...item,
           quantity: 1,
-          subtotal: item.price
+          subtotal: hargaJual
         }
       ]);
     }
   };
 
   const updateQuantity = (itemId, amount) => {
-    const updatedItems = selectedItems.marolerolerestp(item => {
+    const updatedItems = selectedItems.map(item => {
       if (item.id === itemId) {
         const newQuantity = item.quantity + amount;
         if (newQuantity < 1) return null;
-        
+
+        const hargaJual = parseHargaToNumber(item.harga_jual);
         return {
           ...item,
           quantity: newQuantity,
-          subtotal: newQuantity * item.price
+          subtotal: newQuantity * hargaJual
         };
       }
       return item;
     }).filter(Boolean);
-    
+
     setSelectedItems(updatedItems);
   };
 
@@ -102,70 +120,99 @@ useEffect(() => {
 
   const processTransaction = async () => {
     if (selectedItems.length === 0) {
-      alert('Silakan tambahkan item ke transaksi');
+      setErrorMessage('Silakan tambahkan item ke transaksi');
+      setShowErrorModal(true);
       return;
     }
-    
+
     if (paymentMethod === 'Cash') {
       const cashPaidNum = parseFloat(cashPaid);
       if (isNaN(cashPaidNum) || cashPaidNum < total) {
-        alert('Jumlah uang tunai tidak mencukupi');
+        setErrorMessage('Jumlah uang tunai tidak mencukupi');
+        setShowErrorModal(true);
         return;
       }
     }
-    
-    const transaction = {
-      customer: customerName || 'Pelanggan Umum',
-      items: selectedItems,
-      total,
-      paymentMethod,
-      date: new Date().toISOString(),
-      status: 'completed'
-    };
-    
+
+
+    setIsProcessingPayment(true);
+
     try {
-      const response = await fetch('https://api-kantin-hono.up.railway.app/api/transactions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify(transaction)
-      });
+      // Payload Transaksi
+      const transactionData = {
+        tunai: paymentMethod === 'Cash' ? parseFloat(cashPaid) : 0,
+        details: selectedItems.map(item => ({
+          produk_id: item.id,
+          qty: item.quantity
+        }))
+      };
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      console.log('Data transaksi yang akan dikirim:', transactionData);
+
+      const createdTransaction = await buatTransaksi(transactionData);
+      if (createdTransaction) {
+        // Show success modal instead of alert
+        setShowSuccessModal(true);
+      } else {
+        setErrorMessage('Gagal menyimpan transaksi. Silakan coba lagi.');
+        setShowErrorModal(true);
       }
-
-      const result = await response.json();
-      console.log('Transaction saved:', result);
-      alert('Transaksi berhasil disimpan!');
-      
-      setSelectedItems([]);
-      setCustomerName('');
-      setPaymentMethod('Cash');
-      setShowCustomerInfo(false);
-      setCashPaid('');
-    } catch (err) {
-      console.error('Error saving transaction:', err);
-      alert('Gagal menyimpan transaksi. Silakan coba lagi.');
+    } catch (error) {
+      console.error('Error processing transaction:', error);
+      setErrorMessage('Gagal menyimpan transaksi. Silakan coba lagi.');
+      setShowErrorModal(true);
+    } finally {
+      // Remove loading state
+      setIsProcessingPayment(false);
     }
+  };
+
+  // Handle success modal OK button
+  const handleSuccessModalOk = async () => {
+    setShowSuccessModal(false);
+
+    // Reset form
+    setSelectedItems([]);
+    setCustomerName('');
+    setPaymentMethod('Cash');
+    setShowCustomerInfo(false);
+    setCashPaid('');
+
+    // Refresh data
+    await fetchProduct();
   };
 
   const calculateChange = () => {
     const cashPaidNum = parseFloat(cashPaid);
+    if (isNaN(cashPaidNum) || cashPaidNum < total) return 0;
     return cashPaidNum - total;
   };
 
-  
-  const refreshTransactions = async () => {
-    try {
-      const transactions = await getTransactions();
-      console.log('Current transactions:', transactions);
-    } catch (err) {
-      console.error('Error fetching transactions:', err);
+ 
+  const handleCashPaidChange = (e) => {
+    const value = e.target.value;
+    
+    const numericValue = value.replace(/[^0-9.]/g, '');
+
+    
+    const parts = numericValue.split('.');
+    if (parts.length > 2) {
+      return; 
     }
+    if (parts[1] && parts[1].length > 2) {
+      parts[1] = parts[1].substring(0, 2);
+    }
+
+    const formattedValue = parts.join('.');
+
+    if (parts[0] && parts[0].length > 10) {
+      return;
+    }
+
+    setCashPaid(formattedValue);
   };
+
+
 
   return (
     <div className="flex">
@@ -283,7 +330,14 @@ useEffect(() => {
                       <div>
                         <p className="font-medium text-gray-800">{item.nama}</p>
                         <p className="text-sm text-gray-500">
-                          {item.harga_jual}
+                          {item.harga_jual} x {item.quantity}
+                        </p>
+                        <p className="text-sm font-medium text-gray-700">
+                          Subtotal: {new Intl.NumberFormat('id-ID', {
+                            style: 'currency',
+                            currency: 'IDR',
+                            minimumFractionDigits: 0
+                          }).format(item.subtotal)}
                         </p>
                       </div>
                       <div className="flex items-center space-x-2">
@@ -349,10 +403,10 @@ useEffect(() => {
                       Jumlah Uang Tunai
                     </label>
                     <input
-                      type="number"
+                      type="text"
                       placeholder="Masukkan jumlah uang tunai"
                       value={cashPaid}
-                      onChange={(e) => setCashPaid(e.target.value)}
+                      onChange={handleCashPaidChange}
                       className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                     {cashPaid && parseFloat(cashPaid) >= total && (
@@ -372,20 +426,88 @@ useEffect(() => {
                 
                 <button
                   onClick={processTransaction}
-                  disabled={selectedItems.length === 0 || (paymentMethod === 'Cash' && (parseFloat(cashPaid) < total || isNaN(parseFloat(cashPaid))))}
-                  className={`w-full py-2 px-4 rounded-md font-medium text-white ${
-                    selectedItems.length === 0 || (paymentMethod === 'Cash' && (parseFloat(cashPaid) < total || isNaN(parseFloat(cashPaid))))
+                  disabled={isProcessingPayment || selectedItems.length === 0 || (paymentMethod === 'Cash' && (parseFloat(cashPaid) < total || isNaN(parseFloat(cashPaid))))}
+                  className={`w-full py-2 px-4 rounded-md font-medium text-white flex items-center justify-center ${
+                    isProcessingPayment || selectedItems.length === 0 || (paymentMethod === 'Cash' && (parseFloat(cashPaid) < total || isNaN(parseFloat(cashPaid))))
                       ? 'bg-gray-400 cursor-not-allowed'
                       : 'bg-green-600 hover:bg-green-700 transition-colors'
                   }`}
                 >
-                  Proses Pembayaran
+                  {isProcessingPayment ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Memproses...
+                    </>
+                  ) : (
+                    'Proses Pembayaran'
+                  )}
                 </button>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 transform transition-all duration-300 scale-100">
+            <div className="text-center">
+             
+              <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+                <svg className="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                Transaksi Berhasil!
+              </h3>
+
+              <p className="text-sm text-gray-500 mb-6">
+                Transaksi telah berhasil disimpan dan data akan di-refresh.
+              </p>
+
+              <button
+                onClick={handleSuccessModalOk}
+                className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors font-medium"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Error Modal */}
+      {showErrorModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 transform transition-all duration-300 scale-100">
+            <div className="text-center">
+
+              <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4">
+                <svg className="h-8 w-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </div>
+
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                Terjadi Kesalahan
+              </h3>
+
+              <p className="text-sm text-gray-500 mb-6">
+                {errorMessage}
+              </p>
+
+              <button
+                onClick={() => setShowErrorModal(false)}
+                className="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transition-colors font-medium"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
