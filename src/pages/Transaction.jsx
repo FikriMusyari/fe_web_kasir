@@ -21,7 +21,7 @@ const TransactionPage = ({ userRole, userName, onLogout }) => {
   const [errorMessage, setErrorMessage] = useState('');
   
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [activeTab, setActiveTab] = useState('transaksi');
+  const [activeTab, setActiveTab] = useState('transactions');
 
   
   const parseHargaToNumber = (hargaString) => {
@@ -227,7 +227,7 @@ useEffect(() => {
         toggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
       />
       
-      <div className={`flex-1 p-6 ml-${isSidebarCollapsed ? '20' : '64'}`}>
+      <div className={`flex-1 p-6 transition-all duration-300 ${isSidebarCollapsed ? 'ml-0' : 'ml-64'}`}>
         <h1 className="text-2xl font-bold mb-4 text-gray-800">Buat Transaksi Baru</h1>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

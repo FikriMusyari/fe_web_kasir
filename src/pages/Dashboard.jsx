@@ -121,7 +121,7 @@ const Dashboard = ({ userRole, userName, onLogout }) => {
       </button>
 
       {/* Main Content Area */}
-      <main className={`flex-1 flex flex-col transition-all duration-300 ease-in-out ${isSidebarCollapsed ? 'ml-0 lg:ml-0' : 'ml-0 lg:ml-64'}`}>
+      <main className={`flex-1 flex flex-col transition-all duration-300 ease-in-out ${isSidebarCollapsed ? 'ml-0' : 'ml-0 lg:ml-64'}`}>
         {/* Header/Navbar di dalam konten utama */}
         <div className="bg-white shadow-md p-4 flex items-center justify-end z-30">
           <div className="flex items-center space-x-3 bg-gray-100 p-2 rounded-lg">

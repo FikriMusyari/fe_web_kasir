@@ -384,7 +384,7 @@ const Reports = ({ userName, userRole, onLogout }) => {
 
           {/* Main Content Area */}
           {/* Pastikan main content memiliki z-index yang lebih rendah dari sidebar tetapi lebih tinggi dari overlay */}
-          <div className={`flex-1 p-6 transition-all duration-300 ease-in-out z-30 ${isSidebarCollapsed ? 'ml-0 lg:ml-0' : 'ml-0 lg:ml-64'}`}>
+          <div className={`flex-1 p-6 transition-all duration-300 ease-in-out z-30 ${isSidebarCollapsed ? 'ml-0' : 'ml-0 lg:ml-64'}`}>
             {/* Tombol Hamburger/Menu di luar Sidebar, sekarang di dalam flex-1 */}
             <button
               onClick={toggleSidebar}

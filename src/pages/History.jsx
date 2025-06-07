@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { History } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import TransactionStats from '../components/TransactionStats';
@@ -283,7 +283,7 @@ const TransactionHistory = ({ userRole, userName, onLogout }) => {
         toggleSidebar={toggleSidebar}
       />
       
-      <div className={`flex-1 flex flex-col overflow-hidden ${isSidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
+      <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${isSidebarCollapsed ? 'ml-0' : 'ml-64'}`}>
         <header className="bg-white shadow">
           <div className="px-6 py-4">
             <div className="flex items-center justify-between">
