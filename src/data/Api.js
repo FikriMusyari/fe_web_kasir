@@ -7,8 +7,10 @@ const getUserById = async (userId) => {
     const response = await axios.get(`${BASE_URL}/users/${userId}`);
     return response.data;
   } catch (error) {
-    console.error(`Terjadi kesalahan saat mengambil data pengguna dengan ID ${userId}:`, error);
-    return null;
+    return {
+      success: false,
+      error: error.response?.data?.errors || 'Terjadi kesalahan saat mengambil data pengguna'
+    }
   }
 };
 
@@ -18,14 +20,16 @@ const getCurrentUser = async () => {
 
     const response = await axios.get(`${BASE_URL}/users/current`, {
       headers: {
-        "Authorization": `Bearer ${token}`, 
+        "Authorization": `Bearer ${token}`,
       },
     });
 
     return response.data;
   } catch (error) {
-    console.error('Terjadi kesalahan saat mengambil data pengguna yang sedang login:', error);
-    return null;
+    return {
+      success: false,
+      error: error.response?.data?.errors || 'Terjadi kesalahan saat mengambil data pengguna'
+    }
   }
 };
 
@@ -35,7 +39,10 @@ const loginUser = async (credentials) => {
     return response.data;
   } catch (error) {
     console.error('Login gagal:', error);
-    return null;
+    return {
+      success: false,
+      error: error.response?.data?.errors || 'Login gagal'
+    }
   }
 };
 
@@ -48,16 +55,36 @@ const addUser = async (newUser) => {
         Authorization: `Bearer ${token}`
       }
     });
-    return { 
-      success: true, 
-      data: response.data.data 
+    return {
+      success: true,
+      data: response.data
     };
   } catch (error) {
-    console.error('Gagal menambahkan user:', error);
-    return { 
-      success: false, 
-      message: error.response?.data?.message || 'Terjadi kesalahan saat menambahkan user'
+    return {
+      success: false,
+      error: error.response?.data?.errors || 'Terjadi kesalahan saat menambahkan user'
+    }
+  }
+};
+
+const updateUser = async (newUser) => {
+  const token = localStorage.getItem('token');
+  try {
+    const response = await axios.patch(`${BASE_URL}/users/current`, newUser, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return {
+      success: true,
+      data: response.data
     };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.response?.data?.errors || 'Terjadi kesalahan saat mengupdate user'
+    }
   }
 };
 
@@ -72,7 +99,10 @@ const addUser = async (newUser) => {
       return { success: true, data: response.data };
     } catch (error) {
       console.error(`Gagal menghapus pengguna dengan ID ${userId}:`, error);
-      return { success: false, message: error.response?.data?.message || 'Terjadi kesalahan saat menghapus user' };
+      return {
+        success: false,
+        error: error.response?.data?.errors || 'Terjadi kesalahan saat menghapus pengguna'
+      }
     }
   };
 
@@ -89,7 +119,10 @@ const getProducts = async () => {
     return response.data;
   } catch (error) {
     console.error('Terjadi kesalahan saat mengambil data produk:', error);
-    return null;
+    return {
+        success: false,
+        error: error.response?.data?.errors
+      }
   }
 };
 
@@ -104,7 +137,10 @@ const buatProducts = async (dataproduk) => {
     });
     return response.data;
   } catch (error) {
-    return null
+    return {
+        success: false,
+        error: error.response?.data?.errors
+      }
   }
 };
 
@@ -121,7 +157,10 @@ const updateProduct = async (productId, updatedData) => {
     return response.data;
   } catch (error) {
     console.error(`Gagal mengupdate produk dengan ID ${productId}:`, error);
-    return null;
+    return {
+        success: false,
+        error: error.response?.data?.errors
+      }
   }
 };
 
@@ -140,7 +179,10 @@ const searchProduct = async (query) => {
     return response.data;
   } catch (error) {
     console.error(`Gagal menghapus produk dengan ID ${productId}:`, error);
-    return null;
+    return {
+        success: false,
+        error: error.response?.data?.errors
+      }
   }
 };
 
@@ -155,7 +197,10 @@ const deleteProduct = async (productId) => {
     return response.data;
   } catch (error) {
     console.error(`Gagal menghapus produk dengan ID ${productId}:`, error);
-    return null;
+    return {
+        success: false,
+        error: error.response?.data?.errors
+      }
   }
 };
 
@@ -170,7 +215,10 @@ const buatTransaksi = async (dataTransaksi) => {
     });
     return response.data;
   } catch (error) {
-    return null
+    return {
+        success: false,
+        error: error.response?.data?.errors
+      }
   }
 };
 
@@ -186,7 +234,10 @@ const getTransactions = async () => {
     return response.data;
   } catch (error) {
     console.error('Terjadi kesalahan saat mengambil data produk:', error);
-    return null;
+    return {
+        success: false,
+        error: error.response?.data?.errors
+      }
   }
 };
 
@@ -229,7 +280,10 @@ const searchTransactions = async (searchParams) => {
     return response.data;
   } catch (error) {
     console.error('Gagal mencari transaksi:', error);
-    return null;
+    return {
+        success: false,
+        error: error.response?.data?.errors
+      }
   }
 };
 
@@ -244,7 +298,10 @@ const deleteTransaction = async (transactionId) => {
     return response.data;
   } catch (error) {
     console.error(`Gagal menghapus transaksi dengan ID ${transactionId}:`, error);
-    return null;
+    return {
+        success: false,
+        error: error.response?.data?.errors
+      }
   }
 };
 
@@ -254,8 +311,11 @@ const getReports = async () => {
     return response.data;
   } catch (error) {
     console.error('Terjadi kesalahan saat mengambil data laporan:', error);
-    return [];
+    return {
+        success: false,
+        error: error.response?.data?.errors
+      }
   }
 };
 
-export {getUserById, getCurrentUser, loginUser, addUser, getProducts, buatProducts, updateProduct, searchProduct, deleteProduct, buatTransaksi, getTransactions, searchTransactions, deleteTransaction, getReports, deleteUser,};
+export {getUserById, getCurrentUser, loginUser, addUser, updateUser, getProducts, buatProducts, updateProduct, searchProduct, deleteProduct, buatTransaksi, getTransactions, searchTransactions, deleteTransaction, getReports, deleteUser};

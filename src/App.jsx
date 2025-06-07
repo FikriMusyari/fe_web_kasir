@@ -7,7 +7,7 @@ import TransactionPage from './pages/Transaction';
 import HistoryPage from './pages/History';
 import Menu from './pages/Menu';
 import ReportPage from './pages/Report';
-import AddAccountPage from './pages/Settings';
+import SettingsPage from './pages/Settings';
 import Unauthorized from './pages/Unauthorized';
 
 function App() {
@@ -115,7 +115,7 @@ function App() {
         path="/settings"
         element={
           <ProtectedRoute isAuthenticated={isAuthenticated} allowedRoles={['owner', 'kasir']}>
-            <AddAccountPage userRole={userRole} userName={userName} onLogout={handleLogout} />
+            <SettingsPage userRole={userRole} userName={userName} onLogout={handleLogout} />
           </ProtectedRoute>
         }
       />
