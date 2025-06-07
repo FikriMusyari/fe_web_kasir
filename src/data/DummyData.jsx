@@ -73,8 +73,8 @@ export const businessInfo = {
   email: "warungsekre@example.com",
   operatingHours: {
     open: "08:00",
-    close: "22:00",
-    days: "Senin - Minggu"
+    close: "18:00",
+    days: "Senin - Jumat"
   },
   taxIdentificationNumber: "12.345.678.9-123.456",
   foundedYear: 2020

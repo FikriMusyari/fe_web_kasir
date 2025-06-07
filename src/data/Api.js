@@ -40,24 +40,41 @@ const loginUser = async (credentials) => {
 };
 
 const addUser = async (newUser) => {
+  const token = localStorage.getItem('token');
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/users`, {
-      method: 'POST',
+    const response = await axios.post(`${BASE_URL}/users`, newUser, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      },
-      body: JSON.stringify(newUser)
+        Authorization: `Bearer ${token}`
+      }
     });
-
-    if (!response.ok) throw new Error('Gagal menambahkan user');
-
-    return { success: true };
+    return { 
+      success: true, 
+      data: response.data.data 
+    };
   } catch (error) {
-    console.error(error);
-    return { success: false };
+    console.error('Gagal menambahkan user:', error);
+    return { 
+      success: false, 
+      message: error.response?.data?.message || 'Terjadi kesalahan saat menambahkan user'
+    };
   }
 };
+
+  const deleteUser = async (userId) => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.delete(`${BASE_URL}/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return { success: true, data: response.data };
+    } catch (error) {
+      console.error(`Gagal menghapus pengguna dengan ID ${userId}:`, error);
+      return { success: false, message: error.response?.data?.message || 'Terjadi kesalahan saat menghapus user' };
+    }
+  };
 
 
 const getProducts = async () => {
@@ -241,4 +258,4 @@ const getReports = async () => {
   }
 };
 
-export {getUserById, getCurrentUser, loginUser, addUser, getProducts, buatProducts, updateProduct, searchProduct, deleteProduct, buatTransaksi, getTransactions, searchTransactions, deleteTransaction, getReports};
+export {getUserById, getCurrentUser, loginUser, addUser, getProducts, buatProducts, updateProduct, searchProduct, deleteProduct, buatTransaksi, getTransactions, searchTransactions, deleteTransaction, getReports, deleteUser,};
