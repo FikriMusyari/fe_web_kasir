@@ -8,9 +8,9 @@ const apiService = {
   getUsers: () => Promise.resolve({
     success: true,
     data: [
-      { id: 1, username: 'owner1', role: 'owner', createdAt: '2024-01-15' },
-      { id: 2, username: 'kasir1', role: 'kasir', createdAt: '2024-01-20' },
-      { id: 3, username: 'kasir2', role: 'kasir', createdAt: '2024-02-01' }
+      { id: 1, username: 'owner1', role: 'owner', createdAt: '2024-01-15', nama: 'Owner Pertama' },
+      { id: 2, username: 'kasir1', role: 'kasir', createdAt: '2024-01-20', nama: 'Kasir Satu' },
+      { id: 3, username: 'kasir2', role: 'kasir', createdAt: '2024-02-01', nama: 'Kasir Dua' }
     ]
   }),
   updateUser: (userData) => Promise.resolve({ success: true, message: 'User updated successfully' }),
@@ -139,6 +139,7 @@ const SettingsPage = ({ userRole, userName, onLogout }) => {
   });
 
   const addUserForm = useForm({
+    nama: '', // Added nama field
     username: '',
     password: '',
     role: 'kasir'
@@ -203,25 +204,40 @@ const SettingsPage = ({ userRole, userName, onLogout }) => {
   };
 
   const handleAddUser = async () => {
-    const { username, password } = addUserForm.values;
-    
-    if (!username || !password) {
-      alert('Semua kolom harus diisi!');
+    const { nama, username, password, role } = addUserForm.values;
+
+    if (!nama || !username || !password) {
+      alert('Nama Lengkap, Username, dan Password harus diisi!');
       return;
     }
 
     try {
-      const response = await executeAction(apiService.addUser, addUserForm.values);
+      // Menyiapkan data sesuai format API yang dibutuhkan
+      const userData = {
+        nama: nama,
+        username: username,
+        password: password,
+        role: role
+      };
+
+      // Memanggil API addUser dari Api.js, bukan dari apiService
+      const response = await addUser(userData);
+      
       if (response.success) {
         alert('Akun berhasil ditambahkan!');
         addUserForm.reset();
         setShowAddForm(false);
         handleLoadUsers();
       } else {
-        alert('Gagal menambahkan akun!');
+        alert(`Gagal menambahkan akun: ${response.message || 'Terjadi kesalahan tidak diketahui.'}`);
       }
     } catch (error) {
-      alert('Terjadi kesalahan saat menambahkan akun');
+      console.error("Error adding user:", error);
+      if (error.response && error.response.data && error.response.data.message) {
+        alert(`Terjadi kesalahan saat menambahkan akun: ${error.response.data.message}`);
+      } else {
+        alert('Terjadi kesalahan saat menambahkan akun. Silakan coba lagi.');
+      }
     }
   };
 
@@ -260,7 +276,7 @@ const SettingsPage = ({ userRole, userName, onLogout }) => {
     }
 
     try {
-      const response = await executeAction(apiService.deleteUser, user.id);
+      const response = await deleteUser(user.id);
       if (response.success) {
         alert('Akun berhasil dihapus!');
         handleLoadUsers();
@@ -397,10 +413,18 @@ const SettingsPage = ({ userRole, userName, onLogout }) => {
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <InputField
+          label="Nama Lengkap" // New field for nama
+          value={addUserForm.values.nama}
+          onChange={(e) => addUserForm.setValue('nama', e.target.value)}
+          placeholder="Nama Lengkap"
+          icon={User}
+        />
+        <InputField
           label="Username"
           value={addUserForm.values.username}
           onChange={(e) => addUserForm.setValue('username', e.target.value)}
           placeholder="Username"
+          icon={User}
         />
         <InputField
           label="Password"
@@ -408,6 +432,7 @@ const SettingsPage = ({ userRole, userName, onLogout }) => {
           value={addUserForm.values.password}
           onChange={(e) => addUserForm.setValue('password', e.target.value)}
           placeholder="Password"
+          icon={Lock}
         />
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
