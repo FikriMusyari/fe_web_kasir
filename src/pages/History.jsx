@@ -6,14 +6,15 @@ import TransactionTable from '../components/TransactionTable';
 import TransactionModals from '../components/TransactionModals';
 import SimpleSearchBar from '../components/SimpleSearchBar';
 import { getTransactions, searchTransactions, deleteTransaction } from '../data/Api.js';
-
+import { Menu as MenuIcon, ChevronLeft } from 'lucide-react'; // Import icons for the toggle button
 
 const TransactionHistory = ({ userRole, userName, onLogout }) => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchLoading, setSearchLoading] = useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  // Set isSidebarCollapsed to true by default, so it starts collapsed, same as Dashboard
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true); 
   const [activeTab, setActiveTab] = useState('history');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [transactionToDelete, setTransactionToDelete] = useState(null);
@@ -27,7 +28,11 @@ const TransactionHistory = ({ userRole, userName, onLogout }) => {
     averageValue: 0
   });
 
- 
+  // Toggle sidebar function
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
+
   useEffect(() => {
     const fetchTransactions = async () => {
       setLoading(true);
@@ -36,12 +41,9 @@ const TransactionHistory = ({ userRole, userName, onLogout }) => {
 
         const transactions = response?.data || [];
 
-       
-
         const transactionsWithItemCount = transactions.map(transaction => {
           const itemCount = transaction.details && Array.isArray(transaction.details) ?
             transaction.details.reduce((total, detail) => {
-              
               const qty = detail.qty || detail.quantity || detail.jumlah || 0;
               return total + qty;
             }, 0) : 0;
@@ -61,7 +63,6 @@ const TransactionHistory = ({ userRole, userName, onLogout }) => {
           return sum + numericValue;
         }, 0);
 
-        
         const totalRevenue = numericTotal > 0 ?
           `Rp ${numericTotal.toLocaleString('id-ID')}` : 'Rp 0';
 
@@ -76,7 +77,7 @@ const TransactionHistory = ({ userRole, userName, onLogout }) => {
       } catch (error) {
         console.error('Error fetching transactions:', error);
         setTransactions([]);
-        setStats({ totalTransactions: 0, totalRevenue: 0, averageValue: 0 });
+        setStats({ totalTransactions: 0, totalRevenue: 'Rp 0', averageValue: 0 });
       } finally {
         setLoading(false);
       }
@@ -96,8 +97,6 @@ const TransactionHistory = ({ userRole, userName, onLogout }) => {
     return new Date(dateString).toLocaleDateString('id-ID', options);
   };
 
-
-
   const handleViewDetails = (transactionId) => {
     const transaction = transactions.find(tx => tx.id === transactionId);
     if (transaction) {
@@ -111,7 +110,6 @@ const TransactionHistory = ({ userRole, userName, onLogout }) => {
     setSelectedTransaction(null);
   };
 
- 
   const handleDeleteClick = (transaction) => {
     setTransactionToDelete(transaction);
     setShowDeleteModal(true);
@@ -124,10 +122,11 @@ const TransactionHistory = ({ userRole, userName, onLogout }) => {
     try {
       const result = await deleteTransaction(transactionToDelete.id);
       if (result) {
-        
-        setTransactions(prev => prev.filter(tx => tx.id !== transactionToDelete.id));
-        
+        // Update local state by filtering out the deleted transaction
         const updatedTransactions = transactions.filter(tx => tx.id !== transactionToDelete.id);
+        setTransactions(updatedTransactions);
+        
+        // Recalculate stats based on updated transactions
         const totalTransactions = updatedTransactions.length;
         const numericTotal = updatedTransactions.reduce((sum, tx) => {
           const numericValue = parseFloat(tx.total?.replace(/[^\d]/g, '') || 0);
@@ -267,12 +266,16 @@ const TransactionHistory = ({ userRole, userName, onLogout }) => {
     }
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarCollapsed(!isSidebarCollapsed);
-  };
-
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="relative flex h-screen bg-gray-100"> {/* Added 'relative' to parent for overlay positioning */}
+      {/* Overlay for when sidebar is open on mobile */}
+      {!isSidebarCollapsed && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={toggleSidebar}
+        ></div>
+      )}
+
       <Sidebar 
         userRole={userRole} 
         userName={userName} 
@@ -283,23 +286,31 @@ const TransactionHistory = ({ userRole, userName, onLogout }) => {
         toggleSidebar={toggleSidebar}
       />
       
+      {/* Tombol Hamburger/Menu di luar Sidebar, di level teratas dan selalu di depan */}
+      <button
+        onClick={toggleSidebar}
+        className={`fixed top-4 p-2 rounded-full text-white z-[999] transition-all duration-300 ease-in-out
+          ${isSidebarCollapsed ? 'left-4 bg-indigo-700' : 'left-68 bg-indigo-800'}`}
+      >
+        {isSidebarCollapsed ? <MenuIcon size={24} /> : <ChevronLeft size={24} />}
+      </button>
+
+      {/* Main Content Area */}
       <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${isSidebarCollapsed ? 'ml-0' : 'ml-64'}`}>
-        <header className="bg-white shadow">
-          <div className="px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <History className="h-6 w-6 text-indigo-600" />
-                <div className="ml-2">
-                  <h1 className="text-2xl font-semibold text-gray-800">
-                    <span className="text-indigo-600">Riwayat</span> Transaksi
-                  </h1>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {userRole === 'kasir'
-                      ? `Menampilkan transaksi Anda (${userName})`
-                      : 'Menampilkan semua transaksi dari semua kasir'
-                    }
-                  </p>
-                </div>
+        <header className="bg-white shadow px-6 py-4 pt-16 lg:pt-12"> {/* Added pt-16 lg:pt-4 here */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <History className="h-6 w-6 text-indigo-600" />
+              <div className="ml-2">
+                <h1 className="text-4xl font-extrabold text-gray-800">
+                  <span className="text-indigo-600">Riwayat</span> Transaksi
+                </h1>
+                <p className="text-sm text-gray-500 mt-1">
+                  {userRole === 'kasir'
+                    ? `Menampilkan transaksi Anda (${userName})`
+                    : 'Menampilkan semua transaksi dari semua kasir'
+                  }
+                </p>
               </div>
             </div>
           </div>

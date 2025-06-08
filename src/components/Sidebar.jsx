@@ -66,7 +66,7 @@ const Sidebar = ({ userRole, userName, onLogout, activeTab, setActiveTab, isColl
     setActiveTab(tabId);
     navigate(path);
     if (!isCollapsed) {
-        toggleSidebar();
+      toggleSidebar();
     }
   };
 
@@ -96,7 +96,11 @@ const Sidebar = ({ userRole, userName, onLogout, activeTab, setActiveTab, isColl
 
       <div className="p-4 flex flex-col h-full overflow-y-auto">
         <>
-          <h2 className="text-2xl font-bold mb-1 text-white">Warung Sekre</h2>
+          <h2 className="text-3xl font-bold mb-1 text-white" style={{ fontFamily: '"Chewy", cursive' }}>Warung Sekre</h2>
+          
+          {/* Pembatas Baru */}
+          <div className="border-b border-indigo-600 my-4"></div> {/* Garis pembatas */}
+
           <div className="text-indigo-200 mb-6 text-sm">
             {userRole === 'owner' ? 'Owner' : 'Kasir'} - {userName || 'User'}
           </div>
@@ -108,11 +112,11 @@ const Sidebar = ({ userRole, userName, onLogout, activeTab, setActiveTab, isColl
               <li key={item.id}>
                 <button
                   onClick={() => handleTabChange(item.id, item.path)}
-                  className={`flex items-center w-full px-4 py-2 rounded-md transition-colors ${
-                    currentTab === item.id
+                  className={`flex items-center w-full px-4 py-2 rounded-md transition-colors
+                    ${currentTab === item.id
                       ? 'bg-indigo-800 text-white'
-                      : 'text-indigo-100 hover:bg-indigo-600'
-                  }`}
+                      : 'text-indigo-100 hover:bg-indigo-600 hover:text-white'
+                    }`}
                   title={item.label}
                 >
                   <span className="mr-3">{item.icon}</span>
@@ -123,8 +127,8 @@ const Sidebar = ({ userRole, userName, onLogout, activeTab, setActiveTab, isColl
           </ul>
         </nav>
 
-
-        <div className="mt-auto border-t border-indigo-600 pt-2">
+        {/* Profil Pengguna yang Lebih Menonjol */}
+        <div className="mt-auto border-t border-indigo-600 pt-2 bg-indigo-800 bg-opacity-20 rounded-md p-4">
           <div className="flex items-center mb-4">
             <div className="h-8 w-8 rounded-full bg-indigo-500 flex items-center justify-center text-white">
               <User size={16} />
@@ -139,7 +143,7 @@ const Sidebar = ({ userRole, userName, onLogout, activeTab, setActiveTab, isColl
 
           <button
             onClick={onLogout}
-            className="flex items-center w-full px-4 py-2 text-indigo-100 hover:bg-indigo-800 rounded-md transition-colors"
+            className="flex items-center w-full px-4 py-2 text-indigo-100 hover:bg-indigo-800 hover:text-white rounded-md transition-colors"
           >
             <LogOut size={20} className="mr-3" />
             <span className="text-white">Keluar</span>
