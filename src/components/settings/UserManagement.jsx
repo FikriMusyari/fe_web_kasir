@@ -4,7 +4,7 @@ import { Button } from '../common/CommonComponents';
 import useForm from '../../hooks/useForm';
 import AddUserForm from './AddUserForm';
 import UserTable from './UserTable';
-import { addUser, updateUser, deleteUser } from '../../data/Api';
+import { addUser, updateUser, deleteUser, getAllUsers } from '../../data/Api';
 
 const UserManagement = ({ currentUserId }) => {
   const [users, setUsers] = useState([]);
@@ -29,22 +29,9 @@ const UserManagement = ({ currentUserId }) => {
   const handleLoadUsers = async () => {
     setUsersLoading(true);
     try {
-      // Mock data for now - replace with actual API call
-      const mockUsers = [
-        {
-          id: 1,
-          username: 'admin',
-          role: 'owner',
-          createdAt: '2024-01-01T00:00:00Z'
-        },
-        {
-          id: 2,
-          username: 'kasir1',
-          role: 'kasir',
-          createdAt: '2024-01-02T00:00:00Z'
-        }
-      ];
-      setUsers(mockUsers);
+      const response = await getAllUsers();
+      setUsers(response.data.data || response.data || []);
+
     } catch (error) {
       alert('Gagal memuat data pengguna');
     } finally {

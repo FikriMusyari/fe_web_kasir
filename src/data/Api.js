@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://api-kantin-hono.up.railway.app/api';
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 const getUserById = async (userId) => {
   try {
@@ -11,6 +11,25 @@ const getUserById = async (userId) => {
       success: false,
       error: error.response?.data?.errors || 'Terjadi kesalahan saat mengambil data pengguna'
     }
+  }
+};
+
+const getAllUsers = async () => {
+  try {
+     const token = localStorage.getItem("token");
+    const response = await axios.get(`${BASE_URL}/users/all`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Terjadi kesalahan ambil user:', error);
+    return {
+        success: false,
+        error: error.response?.data?.errors
+      }
   }
 };
 
@@ -87,6 +106,7 @@ const updateUser = async (newUser) => {
     }
   }
 };
+
 
   const deleteUser = async (userId) => {
     const token = localStorage.getItem('token');
@@ -307,7 +327,13 @@ const deleteTransaction = async (transactionId) => {
 
 const getReports = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/reports`);
+         const token = localStorage.getItem("token");
+    const response = await axios.get(`${BASE_URL}/reports`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Terjadi kesalahan saat mengambil data laporan:', error);
@@ -318,4 +344,4 @@ const getReports = async () => {
   }
 };
 
-export {getUserById, getCurrentUser, loginUser, addUser, updateUser, getProducts, buatProducts, updateProduct, searchProduct, deleteProduct, buatTransaksi, getTransactions, searchTransactions, deleteTransaction, getReports, deleteUser};
+export {getUserById, getCurrentUser, loginUser, addUser, updateUser, getProducts, buatProducts, updateProduct, searchProduct, deleteProduct, buatTransaksi, getTransactions, searchTransactions, deleteTransaction, getReports, deleteUser, getAllUsers};

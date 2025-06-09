@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import { DollarSign, TrendingUp, Package, Award, Calendar, ArrowUpRight, Menu, ChevronLeft, BarChart2, PieChart } from 'lucide-react';
-
-// Import fungsi API
 import { getReports } from '../data/Api';
 
 // Helper function to parse currency strings to numbers
