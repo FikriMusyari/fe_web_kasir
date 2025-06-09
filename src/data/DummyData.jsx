@@ -12,23 +12,6 @@ export const transactionHistory = {
   ]
 };
 
-export const mockTransactions = [
-  {
-    id: 'TRX-001',
-    date: '2025-05-01T14:30:00',
-    customer: 'PikrrI',
-    items: [
-      { name: 'Nasi Goreng', quantity: 2, price: 18000 },
-      { name: 'Es Teh Manis', quantity: 3, price: 5000 }
-    ],
-    itemCount: 5,
-    total: 124500,
-    cashier: 'Pikri',
-    paymentMethod: 'Credit Card',
-    status: 'completed'
-  }
-];
-
 export const salesReport = {
   overview: {
     growthRate: "7.4%",
