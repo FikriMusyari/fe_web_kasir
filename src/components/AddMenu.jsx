@@ -127,7 +127,7 @@ const AddMenuItemModal = ({ onClose, animationClass, onProductAdded }) => {
 
   return (
     // Backdrop modal
-    <div className={`fixed inset-0 bg-opacity-60 flex items-center justify-center z-[1000] p-4 ${animationClass ? animationClass : ''}`}>
+    <div className={`fixed inset-0 flex items-center justify-center z-[1000] p-4 ${animationClass ? animationClass : ''}`}>
       {/* Kontainer Modal */}
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-8 relative transform transition-transform duration-300 animate-scale-in">
         {/* Tombol Tutup */}
