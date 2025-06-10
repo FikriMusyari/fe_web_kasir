@@ -327,7 +327,7 @@ const TransactionPage = ({ userRole, userName, onLogout }) => {
                       <p className="text-sm text-gray-500 mb-2">{item.kategori}</p>
                       <div className="flex justify-between items-center">
                         <span className="font-semibold text-indigo-700 text-lg">
-                          {formatCurrency(parseHargaToNumber(item.harga_jual))}
+                          {item.harga_jual}
                         </span>
                         <button className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-white bg-green-500 p-2 rounded-full shadow-md hover:bg-green-600">
                           <Plus className="w-5 h-5" />

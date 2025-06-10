@@ -200,11 +200,11 @@ const MenuCard = ({ item, userRole, onRefresh }) => {
           {/* Section untuk Harga */}
           <div className="mt-auto pt-4 border-t border-gray-100 flex flex-col items-start"> {/* Align price to start */}
             {userRole === 'owner' && (
-              <p className="text-gray-600 text-sm mb-1.5">Harga Beli: <span className="font-bold">{formatCurrency(item.harga_beli)}</span></p>
+              <p className="text-gray-600 text-sm mb-1.5">Harga Beli: <span className="font-bold">{item.harga_beli}</span></p>
             )}
             <p className="text-lg font-bold text-emerald-600">Harga Jual:</p> {/* "Harga Jual" on its own line */}
             <p className="text-4xl font-extrabold text-emerald-700 leading-none"> {/* Much larger for "Harga Jual" value */}
-                {formatCurrency(item.harga_jual)}
+                {item.harga_jual}
             </p>
           </div>
         </div>
