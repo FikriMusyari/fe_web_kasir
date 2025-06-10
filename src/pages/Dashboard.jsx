@@ -3,14 +3,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { User, TrendingUp, MapPin, Phone, Clock } from 'lucide-react';
 import { Menu as MenuIcon, ChevronLeft } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
-import { businessInfo } from '../data/DummyData';
 
-// --- Impor gambar logo ---
 import cookMenuIcon from '../icons/cook-menu.png';
 import historyIcon from '../icons/history.png';
 import reportsIcon from '../icons/reports.png';
 import transactionIcon from '../icons/transaction.png';
-// ------------------------
 
 const Dashboard = ({ userRole, userName, onLogout }) => {
   const navigate = useNavigate();
@@ -23,7 +20,6 @@ const Dashboard = ({ userRole, userName, onLogout }) => {
 
   const activeTab = location.pathname.split('/')[1] || 'dashboard';
 
-  // Quick action cards (tetap statis)
   const ownerCards = [
     {
       icon: <img src={transactionIcon} alt="Transaksi Icon" className="w-6 h-6 border-2 border-white rounded-md" />,
